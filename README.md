@@ -1,9 +1,9 @@
 Yet Another PixInsight script for GraXpert.
 
 Script is compatible with GradXtractAI, a derivate version of GraXpert providing additional features
-- Work with native PixInsight file formal XISF.
-- Output of the background model.
-- Better display of GraXpert errors in PixInsight console.
+- Work with native PixInsight file format XISF (avoid deprecated messages in PixInsight console).
+- Output of the background model (optional).
+- Better display of errors in PixInsight console.
 
 I'll adapt this script as soon as GraXpert will bring new features.
 
@@ -20,7 +20,7 @@ From PixInsight, Menu SCRIPT > Feature scripts…
 ## Running GraXpert script
 From PixInsight
 - Open a photo.
-- Run script SCRIPT > Utilities > PixGraXpert.
+- Run script SCRIPT > Utilities > GraXpert.
 - Click on execute.
 - First time you'll have to select path to GraXpert or GradXtract application.
 - Script will launch Gradien Extraction and display result with optional display of background.
