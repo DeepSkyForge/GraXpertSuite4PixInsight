@@ -99,7 +99,7 @@
 // FIXME: GRAXPERT_HOME_DIR for Linux")
 #endif
 
-#define PACKAGE_URL "https://drive.google.com/drive/folders/1L7l1ngw-5wArhWOZ9IDa2pFL0dGIu8Au?usp=sharing"
+#define GITHUB_RELEASES "https://github.com/AstroDeepSky/GradXtractAI/releases/latest"
 #define APP_PATH GRAXPERT_HOME_DIR+"/path.cfg"
 #define PREFERENCES GRAXPERT_HOME_DIR+"/preferences.cfg"
 
@@ -161,7 +161,7 @@ function getGraXpertPath() {
 	// pop-up Error did not explicitaly ask for new path
 	let mb = new MessageBox(
 			"<p><center>Select path to GradXtractAI (or GraXpert) first!</center></p>"+
-			"<p><center><a href='" + PACKAGE_URL + "'>GradXtractAI available here</a></center></p>",
+			"<p><center><a href='" + GITHUB_RELEASES + "'>GradXtractAI available here</a></center></p>",
 			TITLE,
 			StdIcon_NoIcon,
 			StdButton_Ok, StdButton_Cancel
@@ -441,7 +441,7 @@ function GraXpertEngine() {
 		
 		// add parameters to command line
 		if ( GraXpertParameters.background ) {
-			command += " -background " + bkgFile
+			command += " -background \"" + bkgFile + "\""
 		}
 		if ( GraXpertParameters.smoothing != "" ) {
 			command += " -smoothing " + GraXpertParameters.smoothing
@@ -457,12 +457,15 @@ function GraXpertEngine() {
 		if (File.exists(tmpFile)) File.remove(tmpFile);
 		if (File.exists(outFile)) File.remove(outFile);
 		if (File.exists(bkgFile)) File.remove(bkgFile);
+		
+		// clone view
+		let clonedView = cloneHidden(targetView);
 
 		try {
 			Console.show()
 			
 			// save image
-			if ( !targetView.window.saveAs(tmpFile, false, false, true, false) ) {
+			if ( !clonedView.window.saveAs(tmpFile, false, false, true, false) ) {
 				throw "Save error"
 			}
 		
@@ -559,6 +562,13 @@ function GraXpertEngine() {
 				targetView.endProcess();
 				result.forceClose();
 			} else {
+				/* rework
+				var resultView = cloneHidden(targetView);
+				resultView.beginProcess();
+				resultView.image.assign( result.mainView.image );
+				resultView.endProcess();
+				result.forceClose();
+				*/
 				// restore original fit header
 				// refer https://github.com/Steffenhir/GraXpert/issues/70
 				result.keywords = targetView.window.keywords
@@ -585,6 +595,9 @@ function GraXpertEngine() {
 				this.report()
 			}
 		}
+		
+		// close clone view
+		closeView(clonedView);
 		
 		// flush console
 		Console.flush()
@@ -671,7 +684,9 @@ function GraXpertDialog(targetView, engine) {
 	this.resetSmooth.setScaledFixedSize( 24, 24 );
 	this.resetSmooth.toolTip = "<p>Reset the Lab color blend to its default.</p>";
 	this.resetSmooth.onClick = () => {
-		this.smoothControl.setValue( getPreferences(true).smoothing );
+		GraXpertParameters.smoothing = getPreferences(true).smoothing
+		this.smoothControl.setValue( GraXpertParameters.smoothing );
+		
 	}
 	
 	// create a horizontal slider to layout the smooth control
