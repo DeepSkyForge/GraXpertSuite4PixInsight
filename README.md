@@ -19,7 +19,8 @@ Several options available
 Important notes:
 - On Windows, GraXpert splatch window hide PixInsight Pause/Abort pop-up. You have to press Enter even though you don't have access to the pop-up.
 - I never tested GraXpert4Pix on Mac or Linux system. Feedbacks are welcome.
-- Please report any issue with GraXpert4Pix or integraton with GraXpert here.
+
+For any issue with GraXpert4Pix or integraton with GraXpert please open a case [https://github.com/AstroDeepSky/GraXpert4PixInsight/issues](here).
 
 
 # Installation
@@ -51,4 +52,4 @@ Script will launch Gradien Extraction and display result.
 
 
 ## Trouble shooting
-In case of problem, activate debug option in dialog box parameters and post issue here with a copy of PixInsight console logs.
+In case of problem, activate debug option in dialog box parameters and post issue [https://github.com/AstroDeepSky/GraXpert4PixInsight/issues](here) with a copy of PixInsight console logs.
