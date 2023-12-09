@@ -3,7 +3,7 @@ Yet Another PixInsight script for GraXpert !
 GraXpert is an astronomical image processing program for extracting and removing gradients from the background of your astrophotos.
 GraXpert4Pix help you to run GraXpert from PixInsiht, retrieve result file and restore astrometic data from original photo.
 
-Several options available
+Several options are available
 - Select target view from drop down list or ne instance button (triangle on bottom left)
 - Select AI version assuming AI models istalled on your system by GraXpert
 - Select correction mode (Substraction or Division, GraXpert use Substraction by default)
@@ -20,7 +20,7 @@ Important notes:
 - On Windows, GraXpert splatch window hide PixInsight Pause/Abort pop-up. You have to press Enter even though you don't have access to the pop-up.
 - I never tested GraXpert4Pix on Mac or Linux system. Feedbacks are welcome.
 
-For any issue with GraXpert4Pix or integraton with GraXpert please open a case [https://github.com/AstroDeepSky/GraXpert4PixInsight/issues](here).
+For any issue with GraXpert4Pix or integraton with GraXpert please open a case [here](https://github.com/AstroDeepSky/GraXpert4PixInsight/issues).
 
 
 # Installation
@@ -36,7 +36,7 @@ For any issue with GraXpert4Pix or integraton with GraXpert please open a case [
 	- From PixInsight, select Menu SCRIPT > Feature scripts…
 	- Click Add and select folder C:/Program Files/PixInsight/src/scripts/PixGraXpert (adapt path for osMac and Linux).
 	- Click Ok and Done to finalize the installation.
-5. Run GraXpert4Pix scrpt from PrixInsight
+5. Run GraXpert4Pix script from PrixInsight
 	- From PixInsight menu SCRIPT > Utilities > GraXpert
 6. Select path to GraXpert application
 	- Path will depend on your system (refer step 1)

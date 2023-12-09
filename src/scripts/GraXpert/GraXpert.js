@@ -87,7 +87,7 @@
 #include "../AdP/WCSmetadata.jsh"
 
 #define TITLE "GraXpert for PixInsight"
-#define VERSION "0.05"
+#define VERSION "v0.0.5"
 
 // set GraXpert folder used to store path and preferences
 #ifeq __PI_PLATFORM__ MACOSX
@@ -410,7 +410,7 @@ function GraXpertEngine() {
 		} else {
 			// Set keywords and properties
 			metadata0.SaveKeywords( result, false/*beginProcess*/ );
-			metadata0.SaveProperties( result, TITLE + " v" + VERSION);
+			metadata0.SaveProperties( result, TITLE + " " + VERSION);
 		}
 	}
 	
@@ -646,7 +646,7 @@ function GraXpertDialog(targetView, engine) {
 	this.title.margin = 6;
 	this.title.wordWrapping = true;
 	this.title.useRichText = true;
-	this.title.text = "<b>" + TITLE + " v" + VERSION + "</b><br>GraXpert is an astronomical image processing program for extracting and removing gradients from the background of your astrophotos.<br>Visit GitHub <a href='" + GRAXPERT4PIX_URL + "'>GraXpert for pixinsight</a> for more information."
+	this.title.text = "<b>" + TITLE + " " + VERSION + "</b><br>GraXpert is an astronomical image processing program for extracting and removing gradients from the background of your astrophotos.<br>Visit GitHub <a href='" + GRAXPERT4PIX_URL + "'>GraXpert for pixinsight</a> for more information."
 
 	// create a view picker
 	this.viewList = new ViewList(this);
@@ -752,9 +752,8 @@ function GraXpertDialog(targetView, engine) {
 		  GraXpertParameters.background = checked;
 		}
 	} else {
-		this.backgroundCheckBox = false
-		GraXpertParameters.background = false
-		Console.writeln("background disabled")
+		this.backgroundCheckBox = false;
+		GraXpertParameters.background = false;
 	}
 		
 	// create debug checkbox
