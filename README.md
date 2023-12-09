@@ -1,20 +1,24 @@
-Yet Another PixInsight script for GraXpert.
+Yet Another PixInsight script for GraXpert !
 
-Script is compatible with GradXtractAI, a derivate version of GraXpert providing additional features
-- Work with native PixInsight file format XISF (avoid deprecated messages in PixInsight console).
-- Output of the background model (optional).
-- Better display of errors in PixInsight console.
+GraXpert is an astronomical image processing program for extracting and removing gradients from the background of your astrophotos.
 
-I'll adapt this script as soon as GraXpert will bring new features.
-
-Any problem must be reported here.
 
 # Installation
-Copy src and rsc folders in PixInsight folder.
+1. Install latest official version of GraXpert.
+**Download:** [https://github.com/Steffenhir/GraXpert/releases/latest](https://github.com/Steffenhir/GraXpert/releases/latest)
 
-From PixInsight, Menu SCRIPT > Feature scripts…
+2. Run GraXpert application and process a photograpie using AI Interpolation Method.
+This will download and install AI model(s).
+
+3. Copy src and rsc folders in PixInsight folder.
+
+4. From PixInsight, Menu SCRIPT > Feature scripts…
 - Click Add and select folder C:/Program Files/PixInsight/src/scripts/PixGraXpert (adapt path for osMac and Linux).
 - Click Ok and Done to finalize the installation.
+
+5. Run GraXpert script from PixInsight menu SCRIPT > Utilities > GraXpert
+
+6. Select path to GraXpert application.
 
 
 ## Running GraXpert script
@@ -22,8 +26,10 @@ From PixInsight
 - Open a photo.
 - Run script SCRIPT > Utilities > GraXpert.
 - Click on execute.
+
+Note:
 - First time you'll have to select path to GraXpert or GradXtract application.
-- Script will launch Gradien Extraction and display result with optional display of background.
+- Script will launch Gradien Extraction and display result.
 
 ## Trouble shooting
-In case of problem, you can activate debug option in dialog box parameters to get more information.
+In case of problem, activate debug option in dialog box parameters and post issue here with a copy of console logs.

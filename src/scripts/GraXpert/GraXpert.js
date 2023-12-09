@@ -86,22 +86,30 @@
 #define SETTINGS_MODULE "GraXpert"
 #include "../AdP/WCSmetadata.jsh"
 
-#define TITLE "GraXpert"
+#define TITLE "GraXpert for PixInsight"
 #define VERSION "0.05"
 
 // set GraXpert folder used to store path and preferences
 #ifeq __PI_PLATFORM__ MACOSX
-#define GRAXPERT_HOME_DIR File.homeDirectory+"/Library/Application Support/GraXpert"
+#define GRAXPERT4PIX_HOME_DIR File.homeDirectory + "/Library/Application Support/GraXpert4Pix"
+#define GRAXPERT_HOME_DIR File.homeDirectory + "/Library/Application Support/GraXpert"
+#define GRAXPERT_AI_MODELS File.homeDirectory + "/Library/Application Support/GraXpert/ai-models/*"
 #endif
 #ifeq __PI_PLATFORM__ MSWINDOWS
-#define GRAXPERT_HOME_DIR File.homeDirectory+"/AppData/Local/GraXpert"
+#define GRAXPERT4PIX_HOME_DIR File.homeDirectory + "/AppData/Local/GraXpert4Pix"
+#define GRAXPERT_HOME_DIR File.homeDirectory + "/AppData/Local/GraXpert"
+#define GRAXPERT_AI_MODELS File.homeDirectory + "/AppData/Local/GraXpert/GraXpert/ai-models/*"
 #else
-// FIXME: GRAXPERT_HOME_DIR for Linux")
+#define GRAXPERT4PIX_HOME_DIR File.homeDirectory + "/.local/share/GraXpert4Pix"
+#define GRAXPERT_HOME_DIR File.homeDirectory + "/.local/share/GraXpert"
+#define GRAXPERT_AI_MODELS File.homeDirectory + "/.local/share/GraXpert/ai-models/*"
 #endif
 
-#define GITHUB_RELEASES "https://github.com/AstroDeepSky/GradXtractAI/releases/latest"
-#define APP_PATH GRAXPERT_HOME_DIR+"/path.cfg"
-#define PREFERENCES GRAXPERT_HOME_DIR+"/preferences.cfg"
+#define GRAXPERT4PIX_URL "https://github.com/AstroDeepSky/GraXpert4PixInsight/"
+#define GRAXPERT_LATEST_RELEASE "https://github.com/Steffenhir/GraXpert/releases/latest"
+
+#define GRAXPERT_PATH_CFG GRAXPERT4PIX_HOME_DIR + "/path.cfg"
+#define PREFERENCES GRAXPERT4PIX_HOME_DIR + "/preferences.cfg"
 
 /*
  * define some utils
@@ -136,10 +144,10 @@ function getPreferences(defaultValues=false) {
 
 function getGraXpertPath() {
 	// get existing path
-	if ( File.exists(APP_PATH) ) {
+	if ( File.exists(GRAXPERT_PATH_CFG) ) {
 		let path = undefined
 		try {
-			path = JSON.parse(File.readTextFile(APP_PATH)).path;
+			path = JSON.parse(File.readTextFile(GRAXPERT_PATH_CFG)).path;
 		} catch (error) {
 			Console.criticalln("Retrieve preferences failed")
 			Console.criticalln(error)
@@ -148,7 +156,7 @@ function getGraXpertPath() {
 			return path
 		} else {
 			let mb = new MessageBox(
-					"<p>Invalid path found or GraXpert App removed!</p>"+
+					"<p>Invalid path found or GraXpert application removed!</p>"+
 					"<p>" + path + "</p>",
 					TITLE,
 					StdIcon_Error,
@@ -160,8 +168,8 @@ function getGraXpertPath() {
 	
 	// pop-up Error did not explicitaly ask for new path
 	let mb = new MessageBox(
-			"<p><center>Select path to GradXtractAI (or GraXpert) first!</center></p>"+
-			"<p><center><a href='" + GITHUB_RELEASES + "'>GradXtractAI available here</a></center></p>",
+			"<p><center>Select path to GraXpert first!</center></p>"+
+			"<p><center><a href='" + GRAXPERT_LATEST_RELEASE + "'>GraXpert available here</a></center></p>",
 			TITLE,
 			StdIcon_NoIcon,
 			StdButton_Ok, StdButton_Cancel
@@ -173,7 +181,7 @@ function getGraXpertPath() {
 	// no configuration file or invalid path
 	var fd = new OpenFileDialog();
 #ifeq __PI_PLATFORM__ MACOSX
-	fd.caption = "Select GradXtractAI (or GraXpert) from your applications folder...";
+	fd.caption = "Select GraXpert from your applications folder...";
 	fd.filters = [
 		 ["Apps", ".app"]
 	  ];
@@ -181,12 +189,12 @@ function getGraXpertPath() {
 		path = fd.fileName;
 		Console.writeln("<br><b>Set application path</b>");
 		Console.writeln(path.replace("\\", "/"))
-		File.writeTextFile(APP_PATH, { 'path': path});
+		File.writeTextFile(GRAXPERT_PATH_CFG, { 'path': path});
 		return path;
 	}
 #endif
 #ifeq __PI_PLATFORM__ MSWINDOWS
-	fd.caption = "Select GradXtractAI (or GraXpert) from your programs folder...";
+	fd.caption = "Select GraXpert from your programs folder...";
 	fd.filters = [
 		 ["Programs", ".exe", ".bat"]
 	  ];
@@ -194,17 +202,17 @@ function getGraXpertPath() {
 		let path = File.unixPathToWindows(fd.fileName);
 		Console.writeln("<br><b>Set application path</b>");
 		Console.writeln(path.replace("\\", "/"))
-		File.writeTextFile(APP_PATH, JSON.stringify({ 'path': path}));
+		File.writeTextFile(GRAXPERT_PATH_CFG, JSON.stringify({ 'path': path}));
 		return path;
 	}
 #else
-	fd.caption = "Select GradXtractAI (or GraXpert) from your applications folder...";
+	fd.caption = "Select GraXpert from your applications folder...";
 
 	if (fd.execute()) {
 		let path = fd.fileName;
 		Console.writeln("<br><b>Set application path</b>");
 		Console.writeln(path.replace("\\", "/"))
-		File.writeTextFile(APP_PATH, { 'path': path});
+		File.writeTextFile(GRAXPERT_PATH_CFG, { 'path': path});
 		return path;
 	}
 #endif
@@ -212,18 +220,9 @@ function getGraXpertPath() {
 }
 
 function getAIModels() {
-#ifeq __PI_PLATFORM__ MACOSX
-	var path = File.homeDirectory + "/Library/Application Support/GraXpert/ai-models/"
-#endif
-#ifeq __PI_PLATFORM__ MSWINDOWS
-	var path = File.homeDirectory + "/AppData/Local/GraXpert/GraXpert/ai-models/"
-#else
-	Console.criticalln("FIXME: getAIModels for Linux (path to GraXpert/ai-models/ ?)")
-#endif
-
 	let ai_models = []
 	let f = new FileFind;
-	if ( f.begin( path + "*" ) ) do {
+	if ( f.begin( GRAXPERT_AI_MODELS ) ) do {
 		if ( f.isDirectory && f.name != "." && f.name != ".." ) {
 		   ai_models.push(f.name)
 		}
@@ -250,7 +249,16 @@ let GraXpertParameters = {	// stores the current parameters values into the scri
 		// check AI model(s)
 		let ai_models = getAIModels()
 		if (ai_models.length == 0) {
-			Console.criticalln("<br>GraXpert: Please, install GraXpert AI model(s) first")
+			let mb = new MessageBox(
+				"<p><center>GraXpert AI model(s) not yet installed !</center></p>"+
+				"<p><center>Do install AI model(s), first install official <a href='" + GRAXPERT_LATEST_RELEASE + "'>GraXpert</a> application <br>"+
+				"then process a photographie using AI Interpolation Method.<br>"+
+				"Visit GitHub <a href='" + GRAXPERT4PIX_URL + "'>GraXpert for PixInsight</a> for more information</p>",
+				TITLE,
+				StdIcon_NoIcon,
+				StdButton_Ok
+			);
+			mb.execute()
 			return false
 		}
 		
@@ -418,25 +426,20 @@ function GraXpertEngine() {
 		var bkgFile = File.systemTempDirectory+"/GraXpert_background.xisf"
 		var command = "\"" + graxpertPath + "\" \"" + tmpFile + "\""
 		
-		// disable some options and change file name/extention for compatibility
-		let compatibility_mode = (graxpertPath.indexOf("GraXpert-") != -1)
-		if ( compatibility_mode ) {
-			var tmpFile = File.systemTempDirectory+"/Pix.fits"
-			var outFile = File.systemTempDirectory+"/Pix_GraXpert.fits"
-			var bkgFile = File.systemTempDirectory+"/Pix_background.fits"
-			var command = "\"" + graxpertPath + "\" \"" + tmpFile + "\""
-			if ( GraXpertParameters.background ) {
-				Console.writeln("<br><b>GraXpert compatibility:</b> ")
-				Console.warningln("** Warning: Output background not yet available in GraXpert (disabled).")
-				Console.warningln("** Warning: Install and select GradXtractAI, a derivate enhanced version of GraXpert.")
-				Console.warningln("** Warning: Or unchek background option in GraXpert dialog box.")
-				GraXpertParameters.background = false
-			}
-		} else {
+		// disable some options and change file name/extention for compatibility with GraXpert
+		let graxpertPath = getGraXpertPath();
+		let advanced_mode = ( graxpertPath != undefined && graxpertPath.indexOf("GradXtractAI-") > -1 )
+		if ( advanced_mode ) {
 			var tmpFile = File.systemTempDirectory+"/Pix.xisf"
 			var outFile = File.systemTempDirectory+"/GraXpert.xisf"
 			var bkgFile = File.systemTempDirectory+"/GraXpert_background.xisf"
 			var command = "\"" + graxpertPath + "\" \"" + tmpFile + "\" -output \"" + outFile + "\""
+		} else {
+			var tmpFile = File.systemTempDirectory+"/Pix.fits"
+			var outFile = File.systemTempDirectory+"/Pix_GraXpert.fits"
+			var bkgFile = File.systemTempDirectory+"/Pix_background.fits"
+			var command = "\"" + graxpertPath + "\" \"" + tmpFile + "\""
+			GraXpertParameters.background = false
 		}
 		
 		// add parameters to command line
@@ -458,13 +461,11 @@ function GraXpertEngine() {
 		if (File.exists(outFile)) File.remove(outFile);
 		if (File.exists(bkgFile)) File.remove(bkgFile);
 		
-		// clone view
-		let clonedView = cloneHidden(targetView);
-
 		try {
 			Console.show()
 			
 			// save image
+			let clonedView = new View(targetView);
 			if ( !clonedView.window.saveAs(tmpFile, false, false, true, false) ) {
 				throw "Save error"
 			}
@@ -545,7 +546,7 @@ function GraXpertEngine() {
 			}
 			
 			// open result
-			let result = ImageWindow.open(outFile)[0]
+			let result = ImageWindow.open(outFile, '', '', true)[0]
 			if (Console.abortRequested) {
 				result.forceClose();
 				if (background) background.forceClose();
@@ -562,13 +563,6 @@ function GraXpertEngine() {
 				targetView.endProcess();
 				result.forceClose();
 			} else {
-				/* rework
-				var resultView = cloneHidden(targetView);
-				resultView.beginProcess();
-				resultView.image.assign( result.mainView.image );
-				resultView.endProcess();
-				result.forceClose();
-				*/
 				// restore original fit header
 				// refer https://github.com/Steffenhir/GraXpert/issues/70
 				result.keywords = targetView.window.keywords
@@ -595,9 +589,6 @@ function GraXpertEngine() {
 				this.report()
 			}
 		}
-		
-		// close clone view
-		closeView(clonedView);
 		
 		// flush console
 		Console.flush()
@@ -633,7 +624,9 @@ function GraXpertDialog(targetView, engine) {
 		this.smoothControl.setValue(GraXpertParameters.smoothing)
 		this.restoreCheckBox.checked = GraXpertParameters.replace_target;
 		this.debugCheckBox.checked = GraXpertParameters.debug;
-		this.backgroundCheckBox.checked = GraXpertParameters.background;
+		if ( this.backgroundCheckBox ) {
+			this.backgroundCheckBox.checked = GraXpertParameters.background;
+		}
 	}
 	
 	// set window title
@@ -643,16 +636,17 @@ function GraXpertDialog(targetView, engine) {
 	this.userResizable = true;
 
 	// set the minimum width of the dialog
-	this.scaledMinWidth = 340;
+	this.scaledMinWidth = 430;
+	this.scaledMaxHeight = 275;
 
 	// create a label area
 	this.title = new Label(this);
 	this.title.frameStyle = FrameStyle_Box;
-	this.title.minWidth = 45 * this.font.width( 'M' );
+	this.title.minWidth = 46 * this.font.width( 'M' );
 	this.title.margin = 6;
 	this.title.wordWrapping = true;
 	this.title.useRichText = true;
-	this.title.text = "<b>" + TITLE + " v" + VERSION + "</b><br>GraXpert AI image processing."
+	this.title.text = "<b>" + TITLE + " v" + VERSION + "</b><br>GraXpert is an astronomical image processing program for extracting and removing gradients from the background of your astrophotos.<br>Visit GitHub <a href='" + GRAXPERT4PIX_URL + "'>GraXpert for pixinsight</a> for more information."
 
 	// create a view picker
 	this.viewList = new ViewList(this);
@@ -747,14 +741,22 @@ function GraXpertDialog(targetView, engine) {
 	  GraXpertParameters.replace_target = checked;
 	}
 	
-	// create background flag
-	this.backgroundCheckBox = new CheckBox( this );
-	this.backgroundCheckBox.text = "Create background model";
-	this.backgroundCheckBox.toolTip = "<p>Create and open background model.</p>";
-	this.backgroundCheckBox.onClick = function( checked ) {
-	  GraXpertParameters.background = checked;
+	// create background checkbox
+	let graxpertPath = getGraXpertPath();
+	let advanced_mode = ( graxpertPath != undefined && graxpertPath.indexOf("GradXtractAI-") > -1 )
+	if ( advanced_mode ) {
+		this.backgroundCheckBox = new CheckBox( this );
+		this.backgroundCheckBox.text = "Create background model";
+		this.backgroundCheckBox.toolTip = "<p>Create and open background model.</p>";
+		this.backgroundCheckBox.onClick = function( checked ) {
+		  GraXpertParameters.background = checked;
+		}
+	} else {
+		this.backgroundCheckBox = false
+		GraXpertParameters.background = false
+		Console.writeln("background disabled")
 	}
-	
+		
 	// create debug checkbox
 	this.debugCheckBox = new CheckBox( this );
 	this.debugCheckBox.text = "Debug GraXpert";
@@ -814,7 +816,7 @@ function GraXpertDialog(targetView, engine) {
 		this.dialog.ok();
 	};
 	
-	// reset
+	// reset parameters
 	this.setup_Reset = new ToolButton( this );
 	this.setup_Reset.icon = this.scaledResource( ":/process-interface/reset.png" );
 	this.setup_Reset.setScaledFixedSize( 24, 24 );
@@ -823,7 +825,20 @@ function GraXpertDialog(targetView, engine) {
 		// restore default values, update dialog box and clear preferences
 		GraXpertParameters = getPreferences(true)
 		this.update()
-		File.remove(PREFERENCES)
+		if ( File.exists(PREFERENCES) ) {
+			File.remove(PREFERENCES)
+		}
+		if ( File.exists(GRAXPERT_PATH_CFG) ) {
+			let mb = new MessageBox(
+				"<p><center>Do you want to reset path to GraXpert application ?</center></p>",
+				TITLE,
+				StdIcon_NoIcon,
+				StdButton_Yes, StdButton_No
+			);
+			if ( mb.execute() == StdButton_Yes ) {
+				File.remove(GRAXPERT_PATH_CFG)
+			}
+		}
 	};
 	
 	// create a horizontal slider to layout the execution button
@@ -850,8 +865,10 @@ function GraXpertDialog(targetView, engine) {
 	this.sizer.add(this.smoothing_Sizer);
 	this.sizer.addSpacing(8);
 	this.sizer.add(this.restoreCheckBox);
-	this.sizer.addSpacing(8);
-	this.sizer.add(this.backgroundCheckBox);
+	if ( this.backgroundCheckBox ) {
+		this.sizer.addSpacing(8);
+		this.sizer.add(this.backgroundCheckBox);
+	}
 	this.sizer.addSpacing(8);
 	this.sizer.add(this.debugCheckBox);
 	this.sizer.addSpacing(8);
@@ -865,18 +882,17 @@ function GraXpertDialog(targetView, engine) {
 GraXpertDialog.prototype = new Dialog;
 
 function main() {
+
 	// prepare PiGraXpert local directory (save path and preferences)
-	if ( !File.directoryExists(GRAXPERT_HOME_DIR) ) {
-		Console.writeln("Create directory "+GRAXPERT_HOME_DIR)
-		File.createDirectory(GRAXPERT_HOME_DIR, true)
-	} else {
-		Console.writeln("Directory "+GRAXPERT_HOME_DIR)
+	if ( !File.directoryExists(GRAXPERT4PIX_HOME_DIR) ) {
+		Console.writeln("Create directory "+GRAXPERT4PIX_HOME_DIR)
+		File.createDirectory(GRAXPERT4PIX_HOME_DIR, true)
 	}
 	
 	// script should not run in global mode
 	if (Parameters.isGlobalTarget) {
-	  Console.show()
-	  Console.criticalln("GraXpert could not run in global context.");
+		Console.show()
+		Console.criticalln("GraXpert could not run in global context.");
 	}
 	Console.hide()
 
@@ -892,8 +908,6 @@ function main() {
 		var targetView = ImageWindow.activeWindow.currentView;
 	}
 
-
-	
 	// perform the script on the target view
 	let engine = new GraXpertEngine()
 	if (Parameters.isViewTarget) {
