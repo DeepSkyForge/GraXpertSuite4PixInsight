@@ -1,4 +1,5 @@
-
+.gitattributes
+.gitignore
 src/scripts/AdP/AstronomicalCatalogs.jsh
 src/scripts/AdP/CommonUIControls.js
 src/scripts/AdP/ImageSolver.js
