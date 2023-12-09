@@ -4,15 +4,16 @@ GraXpert is an astronomical image processing program for extracting and removing
 
 
 # Installation
-1. Install latest official version of GraXpert.
-**Download:** [https://github.com/Steffenhir/GraXpert/releases/latest](https://github.com/Steffenhir/GraXpert/releases/latest)
+1. Install latest official version of [https://github.com/Steffenhir/GraXpert/releases/latest](GraXpert)
 
 2. Run GraXpert application and process a photograpie using AI Interpolation Method.
++
 This will download and install AI model(s).
 
 3. Copy src and rsc folders in PixInsight folder.
 
 4. From PixInsight, Menu SCRIPT > Feature scripts…
++
 - Click Add and select folder C:/Program Files/PixInsight/src/scripts/PixGraXpert (adapt path for osMac and Linux).
 - Click Ok and Done to finalize the installation.
 
@@ -23,13 +24,13 @@ This will download and install AI model(s).
 
 ## Running GraXpert script
 From PixInsight
-- Open a photo.
-- Run script SCRIPT > Utilities > GraXpert.
-- Click on execute.
+1. Open a photo.
+2. Run script SCRIPT > Utilities > GraXpert.
+3. Click on execute.
 
-Note:
+Notes:
 - First time you'll have to select path to GraXpert or GradXtract application.
 - Script will launch Gradien Extraction and display result.
 
 ## Trouble shooting
-In case of problem, activate debug option in dialog box parameters and post issue here with a copy of console logs.
+In case of problem, activate debug option in dialog box parameters and post issue here with a copy of PixInsight console logs.
