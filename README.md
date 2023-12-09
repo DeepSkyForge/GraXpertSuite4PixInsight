@@ -20,7 +20,7 @@ Important notes:
 - On Windows, GraXpert splatch window hide PixInsight Pause/Abort pop-up. You have to press Enter even though you don't have access to the pop-up.
 - I never tested GraXpert4Pix on Mac or Linux system. Feedbacks are welcome.
 
-For any issue with GraXpert4Pix or integraton with GraXpert please open a case [here](https://github.com/AstroDeepSky/GraXpert4PixInsight/issues).
+For any issue with GraXpert4Pix open a case [here](https://github.com/AstroDeepSky/GraXpert4PixInsight/issues).
 
 
 # Installation
