@@ -65,7 +65,7 @@
 // - Save preferences.
 // v0.0.6 12/12/2023
 // - Fix compatibility with MacOS (Thanks to Rob Pfile)
-// - Simplify the rest path to GraXpert.
+// - Simplify the reset path to GraXpert.
 // - Log running time in Pix console.
 // - Tooltip improved.
 //
