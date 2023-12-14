@@ -96,7 +96,7 @@
 #include "../AdP/WCSmetadata.jsh"
 
 #define TITLE "GraXpert for PixInsight"
-#define VERSION "v0.0.5"
+#define VERSION "v0.0.7"
 
 // set GraXpert folder used to store path and preferences
 #ifeq __PI_PLATFORM__ MACOSX
