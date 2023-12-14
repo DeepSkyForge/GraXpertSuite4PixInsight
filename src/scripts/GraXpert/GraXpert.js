@@ -68,6 +68,9 @@
 // - Simplify the reset path to GraXpert.
 // - Log running time in Pix console.
 // - Tooltip improved.
+// v0.0.7 14/22/2023
+// - Display GraXpert errors in console.
+// - Avoid save path to temporary file.
 //
 // For any support or suggestion related to this script please refer to
 // GitHub https://github.com/AstroDeepSky/GraXpert4PixInsight
@@ -80,6 +83,7 @@
 
 #feature-info  GraXpert AI image processing.<br/>
 
+#include <pjsr/ColorSpace.jsh>
 #include <pjsr/DataType.jsh>
 #include <pjsr/FrameStyle.jsh>
 #include <pjsr/Sizer.jsh>
@@ -363,7 +367,7 @@ let GraXpertParameters = {	// stores the current parameters values into the scri
 function GraXpertEngine() {
 	this.process = new ExternalProcess();
 
-	this.progress = function(status=undefined)
+	this.progress = function (status=undefined)
 	{
 		processEvents();
 		if ((Console.abortRequested) && (this.process.isRunning)) {
@@ -389,13 +393,17 @@ function GraXpertEngine() {
 
 	this.report = function (silent=false) {
 		let errors = 0
+		let counter = 0
 		let lines = String(this.process.stdout).split("\r\n")
 		for (let line of lines) {
-		  if (line.search("ERROR") != -1) {
-			  errors++
-		  }
+			if (line.length > 0) {
+				counter ++
+			}
+			if (line.toLowerCase().search("error") != -1) {
+				errors++
+			}
 		}
-		if ((!silent && errors > 0) || GraXpertParameters.debug ) {
+		if (counter > 0 && (!silent || errors > 0 || GraXpertParameters.debug )) {
 			Console.writeln("<br><b>GraXpert output:</b> ")
 			for (let line of lines) {
 				if (line.length > 0) {
@@ -412,7 +420,7 @@ function GraXpertEngine() {
 		}
 	}
 	
-	this.copyCoordinates = function(reference, result) {
+	this.copyCoordinates = function (reference, result) {
 		Console.writeln("<br><b>Copy coordinates:</b>")
 		// Extract metadata
 		var metadata0 = new ImageMetadata();
@@ -426,33 +434,47 @@ function GraXpertEngine() {
 		}
 	}
 	
+	this.clone = function (targetView, Id) {
+		var img = targetView.mainView.image
+		var cloneImageWindow = new ImageWindow(
+			img.width,
+			img.height,
+			img.numberOfChannels,
+			32,
+			true,
+			img.colorSpace != ColorSpace_Gray,
+			Id
+		);
+
+		cloneImageWindow.mainView.beginProcess(UndoFlag_NoSwapFile);
+		cloneImageWindow.mainView.image.apply(img);
+		cloneImageWindow.mainView.endProcess();
+		
+		targetView.forceClose();
+		
+		return cloneImageWindow
+	}
+	
 	this.execute = function(targetView) {
+		// return if GraXpert path not yet defined
 		let graxpertPath = getGraXpertPath();
-        if (graxpertPath == undefined) {
+		if (graxpertPath == undefined) {
 			return
 		}
 		
-		// prepare command line
-		var tmpFile = File.systemTempDirectory+"/GraXpert_input.xisf"
-		var outFile = File.systemTempDirectory+"/GraXpert.xisf"
-		var bkgFile = File.systemTempDirectory+"/GraXpert_background.xisf"
-		var command = "\"" + graxpertPath + "\" \"" + tmpFile + "\""
-		
 		// disable some options and change file name/extention for compatibility with GraXpert
 		let graxpertPath = getGraXpertPath();
-		let advanced_mode = ( graxpertPath != undefined && graxpertPath.indexOf("GradXtractAI-") > -1 )
+		let advanced_mode = ( graxpertPath != undefined && graxpertPath.indexOf("GradXtractAI") > -1 )
 		if ( advanced_mode ) {
-			var tmpFile = File.systemTempDirectory+"/Pix.xisf"
-			var outFile = File.systemTempDirectory+"/GraXpert.xisf"
-			var bkgFile = File.systemTempDirectory+"/GraXpert_background.xisf"
-			var command = "\"" + graxpertPath + "\" \"" + tmpFile + "\" -output \"" + outFile + "\""
+			var fileExtension = "xisf"
 		} else {
-			var tmpFile = File.systemTempDirectory+"/Pix.fits"
-			var outFile = File.systemTempDirectory+"/Pix_GraXpert.fits"
-			var bkgFile = File.systemTempDirectory+"/Pix_background.fits"
-			var command = "\"" + graxpertPath + "\" \"" + tmpFile + "\""
+			var fileExtension = "fits"
 			GraXpertParameters.background = false
 		}
+		var tmpFile = File.systemTempDirectory+"/Pix."+fileExtension
+		var outFile = File.systemTempDirectory+"/Pix_GraXpert."+fileExtension
+		var bkgFile = File.systemTempDirectory+"/Pix_GraXpert_background."+fileExtension
+		var command = "\"" + graxpertPath + "\" \"" + tmpFile + "\""
 		
 		// add parameters to command line
 		if ( GraXpertParameters.background ) {
@@ -546,7 +568,6 @@ function GraXpertEngine() {
 				throw "File " + outFile + " not found"
 			}
 			
-			
 			// measure time
 			execTime = Math.floor( (Date.now() - execTime) / 1000 )
 			this.progress("Completed")
@@ -557,6 +578,7 @@ function GraXpertEngine() {
 			if ( GraXpertParameters.background ) {
 				if (!File.exists( bkgFile )) {
 					Console.warningln("Background file not found")
+					Console.warningln("Please ensure you have last version of GraXpert")
 				} else {
 					var background = ImageWindow.open(bkgFile)[0]
 					if (Console.abortRequested) {
@@ -584,6 +606,9 @@ function GraXpertEngine() {
 				targetView.endProcess();
 				result.forceClose();
 			} else {
+				// clone result into new ImageWindow
+				result = this.clone(result, "GraXpert")
+				
 				// restore original fit header
 				// refer https://github.com/Steffenhir/GraXpert/issues/70
 				result.keywords = targetView.window.keywords
@@ -598,6 +623,7 @@ function GraXpertEngine() {
 			
 			// show Background
 			if (background) {
+				background = this.clone(background, "GraXpert_background")
 				background.show()
 			}
 			
@@ -643,7 +669,7 @@ function GraXpertDialog(targetView, engine) {
 			this.selectCorrection_ComboBox.currentItem = this.corrections.indexOf(GraXpertParameters.correction)
 		}
 		this.smoothControl.setValue(GraXpertParameters.smoothing)
-		this.restoreCheckBox.checked = GraXpertParameters.replace_target;
+		this.createImageCheckBox.checked = !GraXpertParameters.replace_target;
 		this.debugCheckBox.checked = GraXpertParameters.debug;
 		if ( this.backgroundCheckBox ) {
 			this.backgroundCheckBox.checked = GraXpertParameters.background;
@@ -658,7 +684,8 @@ function GraXpertDialog(targetView, engine) {
 
 	// set the minimum width of the dialog
 	this.scaledMinWidth = 430;
-	this.scaledMaxHeight = 275;
+	this.scaledMaxWidth = 430;
+	this.scaledMaxHeight = 300;
 
 	// create a label area
 	this.title = new Label(this);
@@ -757,17 +784,17 @@ function GraXpertDialog(targetView, engine) {
 	this.selectCorrection_Sizer.addStretch();
 	
 	// create replace target image
-	this.restoreCheckBox = new CheckBox( this );
-	this.restoreCheckBox.text = "Replace target image";
-	this.restoreCheckBox.toolTip = "<p>Replace target image or create a new image.</p>";
-	this.restoreCheckBox.onClick = function( checked )
+	this.createImageCheckBox = new CheckBox( this );
+	this.createImageCheckBox.text = "Create new image";
+	this.createImageCheckBox.toolTip = "<p>Create new image or replace target image.</p>";
+	this.createImageCheckBox.onClick = function( checked )
 	{
-	  GraXpertParameters.replace_target = checked;
+		GraXpertParameters.replace_target = !checked;
 	}
 	
 	// create background checkbox
 	let graxpertPath = getGraXpertPath();
-	let advanced_mode = ( graxpertPath != undefined && graxpertPath.indexOf("GradXtractAI-") > -1 )
+	let advanced_mode = ( graxpertPath != undefined && graxpertPath.indexOf("GradXtractAI") > -1 )
 	if ( advanced_mode ) {
 		this.backgroundCheckBox = new CheckBox( this );
 		this.backgroundCheckBox.text = "Create background model";
@@ -886,7 +913,7 @@ function GraXpertDialog(targetView, engine) {
 	this.sizer.addSpacing(8);
 	this.sizer.add(this.smoothing_Sizer);
 	this.sizer.addSpacing(8);
-	this.sizer.add(this.restoreCheckBox);
+	this.sizer.add(this.createImageCheckBox);
 	if ( this.backgroundCheckBox ) {
 		this.sizer.addSpacing(8);
 		this.sizer.add(this.backgroundCheckBox);
