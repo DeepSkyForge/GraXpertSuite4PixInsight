@@ -71,6 +71,8 @@
 // v0.0.7 14/22/2023
 // - Display GraXpert errors in console.
 // - Avoid save path to temporary file.
+// v0.0.8 18/12/2023
+// - Integration of GraXpert pre-release v2.0.3.
 //
 // For any support or suggestion related to this script please refer to
 // GitHub https://github.com/AstroDeepSky/GraXpert4PixInsight
@@ -95,8 +97,8 @@
 #define SETTINGS_MODULE "GraXpert"
 #include "../AdP/WCSmetadata.jsh"
 
-#define TITLE "GraXpert for PixInsight"
-#define VERSION "v0.0.7"
+#define TITLE "GraXpert script for PixInsight"
+#define VERSION "Beta v1.0.0"
 
 // set GraXpert folder used to store path and preferences
 #ifeq __PI_PLATFORM__ MACOSX
@@ -120,6 +122,7 @@
 
 #define GRAXPERT_PATH_CFG GRAXPERT4PIX_HOME_DIR + "/path.cfg"
 #define PREFERENCES GRAXPERT4PIX_HOME_DIR + "/preferences.cfg"
+
 
 /*
  * define some utils
@@ -262,21 +265,18 @@ let GraXpertParameters = {	// stores the current parameters values into the scri
 
 	// loads the script instance parameters
 	load: function () {
-		// check AI model(s)
-		let ai_models = getAIModels()
-		if (ai_models.length == 0) {
-			let mb = new MessageBox(
-				"<p><center>GraXpert AI model(s) not yet installed !</center></p>"+
-				"<p><center>Do install AI model(s), first install official <a href='" + GRAXPERT_LATEST_RELEASE + "'>GraXpert</a> application <br>"+
-				"then process a photographie using AI Interpolation Method.<br>"+
-				"Visit GitHub <a href='" + GRAXPERT4PIX_URL + "'>GraXpert for PixInsight</a> for more information</p>",
-				TITLE,
-				StdIcon_NoIcon,
-				StdButton_Ok
-			);
-			mb.execute()
-			return false
+		// log GraXpert script version
+		Console.writeln("<br><b>GraXpert load parameters:</b> ")
+		Console.writeln(TITLE + " version " + VERSION)
+		
+		// alert user in case of Beta version
+		if ( VERSION.toLowerCase().startsWith("beta") ) {
+			Console.show()
+			Console.warningln("Please note you are using a Beta version!")
+			Console.warningln("THIS VERSION REQUIRES GraXpert BETA v2.0.3")
+			Console.warningln("THIS VERSION IS NOT COMPATIBLE WITH GraXpert v2.0.2")
 		}
+		let errors = 0
 		
 		// set parameters from Preferences
 		let preferences = getPreferences()
@@ -287,6 +287,31 @@ let GraXpertParameters = {	// stores the current parameters values into the scri
 		GraXpertParameters.background = preferences.background
 		GraXpertParameters.debug = preferences.debug
 		
+		// check local  AI model(s)
+		let ai_models = getAIModels()
+		if (ai_models.length == 0) {
+			Console.warningln("GraXpert AI model(s) not yet installed.")
+			Console.warningln("Default model will be used.")
+			errors++
+			let mb = new MessageBox(
+				"<p><center>GraXpert AI model(s) not yet installed !</center></p>"+
+				"<p><center>The first execution will installe the default model.<br>"+
+				"This may delay processing of first image by several minutes.</center></p>"+
+				"<p><center><a href='" + GRAXPERT4PIX_URL + "'>Visit GitHub GraXpert for PixInsight</a></center></p>",
+				TITLE,
+				StdIcon_NoIcon,
+				StdButton_Ok
+			);
+			mb.execute()
+			// reset AI model to continue
+			GraXpertParameters.ai_model = ""
+		} else if ((GraXpertParameters.ai_model != "") && (ai_models.indexOf(GraXpertParameters.ai_model) == -1)) {
+			Console.warningln("AI model \"" + GraXpertParameters.ai_model + "\" no more stored locally.")
+			Console.warningln("Default model will be used.")
+			errors++
+			GraXpertParameters.ai_model = ""
+		}
+		
 		// load parameters
 		// always check if a value with the given key exists since the parameters table
 		// can be obsolete or can be modified by the user manually
@@ -294,9 +319,13 @@ let GraXpertParameters = {	// stores the current parameters values into the scri
 		// load and check AI model
 		if (Parameters.has("ai_model")) {
 			let ai_model = Parameters.getString("ai_model")
-			if ((ai_model != "") && (ai_models.indexOf(ai_model) == -1)) {
-				Console.warningln("<br>GraXpert: Invalid AI model \"" + ai_model + "\". Select one of \"" + ai_models.join("\", \"") + "\"")
-				Console.warningln("GraXpert: Default model will be used")
+			if ( ai_models.length == 0 ) {
+				GraXpertParameters.ai_model = ""
+			} else if ((ai_model != "") && (ai_models.indexOf(ai_model) == -1)) {
+				Console.warningln("AI model \"" + ai_model + "\" no more stored locally.")
+				Console.warningln("Default model will be used.")
+				errors++
+				GraXpertParameters.ai_model = ""
 			} else {
 				GraXpertParameters.ai_model = ai_model
 			}
@@ -311,8 +340,9 @@ let GraXpertParameters = {	// stores the current parameters values into the scri
 				}
 				GraXpertParameters.smoothing = smoothing
 			} catch (error) {
-				Console.warningln("<br>GraXpert: Invalid smoothing value \"" + Parameters.getString("smoothing") + "\". Select value in range [0, 1]")
-				Console.warningln("GraXpert: Default smoothing will be used (" + GraXpertParameters.smoothing + ")")
+				Console.warningln("Invalid smoothing value \"" + Parameters.getString("smoothing") + "\". Select value in range [0, 1]")
+				Console.warningln("Default smoothing will be used (" + GraXpertParameters.smoothing + ")")
+				errors++
 			}
 		}
 		
@@ -321,8 +351,9 @@ let GraXpertParameters = {	// stores the current parameters values into the scri
 			let correction = Parameters.getString("correction")
 			const corrections = ["Subtraction", "Division"]
 			if ((correction != "") && (corrections.indexOf(correction) == -1)) {
-				Console.warningln("<br>GraXpert: Invalid correction \"" + correction + "\". Select one of \"" + corrections.join("\", \"") + "\"")
-				Console.warningln("GraXpert: Default correction will be used")
+				Console.warningln("Invalid correction \"" + correction + "\". Select one of \"" + corrections.join("\", \"") + "\"")
+				Console.warningln("Default correction will be used")
+				errors++
 			} else {
 				GraXpertParameters.correction = Parameters.getString("correction")
 			}
@@ -333,8 +364,9 @@ let GraXpertParameters = {	// stores the current parameters values into the scri
 			if (Parameters.has("replace_target"))
 				GraXpertParameters.replace_target = Parameters.getBoolean("replace_target")
 		} catch (error) {
-			Console.warningln("<br>GraXpert: Invalid replace target \"" + Parameters.getString("replace_target") + "\". Select \"true\" or \"false\"")
-			Console.warningln("GraXpert: Default replace target will be used (" + GraXpertParameters.replace_target + ")")
+			Console.warningln("Invalid replace target \"" + Parameters.getString("replace_target") + "\". Select \"true\" or \"false\"")
+			Console.warningln("Default replace target will be used (" + GraXpertParameters.replace_target + ")")
+			errors++
 		}
 		
 		// load and check background flag
@@ -342,8 +374,9 @@ let GraXpertParameters = {	// stores the current parameters values into the scri
 			if (Parameters.has("background"))
 				GraXpertParameters.background = Parameters.getBoolean("background")
 		} catch (error) {
-			Console.warningln("<br>GraXpert: Invalid background flag \"" + Parameters.getString("background") + "\". Select \"true\" or \"false\"")
-			Console.warningln("GraXpert: Default background will be used (" + GraXpertParameters.background + ")")
+			Console.warningln("Invalid background flag \"" + Parameters.getString("background") + "\". Select \"true\" or \"false\"")
+			Console.warningln("Default background will be used (" + GraXpertParameters.background + ")")
+			errors++
 		}
 		
 		// load and check debug flag
@@ -351,8 +384,15 @@ let GraXpertParameters = {	// stores the current parameters values into the scri
 			if (Parameters.has("debug"))
 				GraXpertParameters.debug = Parameters.getBoolean("debug")
 		} catch (error) {
-			Console.warningln("<br>GraXpert: Invalid debug \"" + Parameters.getString("debug") + "\". Select \"true\" or \"false\"")
-			Console.warningln("GraXpert: Default debug will be used (" + GraXpertParameters.debug + ")")
+			Console.warningln("Invalid debug \"" + Parameters.getString("debug") + "\". Select \"true\" or \"false\"")
+			Console.warningln("Default debug will be used (" + GraXpertParameters.debug + ")")
+			errors++
+		}
+		
+		if ( errors == 0 ) {
+			Console.writeln("Parameters Ok")
+		} else {
+			Console.writeln("Check completed")
 		}
 		
 		return true
@@ -394,6 +434,7 @@ function GraXpertEngine() {
 	this.report = function (silent=false) {
 		let errors = 0
 		let counter = 0
+		let error_args = false
 		let lines = String(this.process.stdout).split("\r\n")
 		for (let line of lines) {
 			if (line.length > 0) {
@@ -402,19 +443,25 @@ function GraXpertEngine() {
 			if (line.toLowerCase().search("error") != -1) {
 				errors++
 			}
+			if (line.toLowerCase().search("unrecognized arguments") != -1) {
+				error_args = true
+			}
 		}
 		if (counter > 0 && (!silent || errors > 0 || GraXpertParameters.debug )) {
 			Console.writeln("<br><b>GraXpert output:</b> ")
 			for (let line of lines) {
 				if (line.length > 0) {
-					if (line.search("ERROR") != -1) {
-						Console.criticalln(line.replace("ERROR    ", "> "))
-					} else if (line.search("WARNING") != -1) {
-						Console.warningln(line.replace("WARNING  ", "> "))
+					if (line.toLowerCase().search("error") != -1) {
+						Console.criticalln(line)
+					} else if (line.toLowerCase().search("warning") != -1) {
+						Console.warningln(line)
 					} else {
-						Console.writeln(line.replace("INFO     ", "> "))
+						Console.writeln(line)
 					}
 				}
+			}
+			if ( error_args ) {
+				Console.criticalln("<br>Please ensure you have GraXpert version 2.0.3 or higher")
 			}
 			Console.write("<reset-font>")
 		}
@@ -462,23 +509,15 @@ function GraXpertEngine() {
 			return
 		}
 		
-		// disable some options and change file name/extention for compatibility with GraXpert
-		let graxpertPath = getGraXpertPath();
-		let advanced_mode = ( graxpertPath != undefined && graxpertPath.indexOf("GradXtractAI") > -1 )
-		if ( advanced_mode ) {
-			var fileExtension = "xisf"
-		} else {
-			var fileExtension = "fits"
-			GraXpertParameters.background = false
-		}
-		var tmpFile = File.systemTempDirectory+"/Pix."+fileExtension
-		var outFile = File.systemTempDirectory+"/Pix_GraXpert."+fileExtension
-		var bkgFile = File.systemTempDirectory+"/Pix_GraXpert_background."+fileExtension
-		var command = "\"" + graxpertPath + "\" \"" + tmpFile + "\""
+		// set files and command line
+		var tmpFile = File.systemTempDirectory+"/Pix.xisf"
+		var outFile = File.systemTempDirectory+"/Pix_GraXpert.xisf"
+		var bkgFile = File.systemTempDirectory+"/Pix_GraXpert_background.xisf"
+		var command = "\"" + graxpertPath + "\" \"" + tmpFile + "\" -cli"
 		
 		// add parameters to command line
 		if ( GraXpertParameters.background ) {
-			command += " -background \"" + bkgFile + "\""
+			command += " -bg"
 		}
 		if ( GraXpertParameters.smoothing != "" ) {
 			command += " -smoothing " + GraXpertParameters.smoothing
@@ -514,7 +553,10 @@ function GraXpertEngine() {
 			Console.writeln("Smoothing: " + GraXpertParameters.smoothing)
 			Console.writeln("Correction: " + (GraXpertParameters.correction == "" ? "Default" : GraXpertParameters.correction))
 			if ( GraXpertParameters.debug ) {
-				Console.warningln(command)
+				Console.warningln("Command line: "+command)
+			}
+			if ( getAIModels().length == 0 ) {
+				Console.warningln("GraXpert will download default AI model, this may take several minutes.")
 			}
 			Console.write("Status:  ")
 			
@@ -658,10 +700,12 @@ function GraXpertDialog(targetView, engine) {
 	
 	this.update = function() {
 		// update dialog controls
-		if ( GraXpertParameters.ai_model == "" ) {
-			this.selectAI_ComboBox.currentItem = 0
-		} else {
-			this.selectAI_ComboBox.currentItem = this.AIModels.indexOf(GraXpertParameters.ai_model)
+		if ( this.selectAI_Sizer ) {
+			if ( GraXpertParameters.ai_model == "" ) {
+				this.selectAI_ComboBox.currentItem = 0
+			} else {
+				this.selectAI_ComboBox.currentItem = this.AIModels.indexOf(GraXpertParameters.ai_model)
+			}
 		}
 		if ( GraXpertParameters.correction == "" ) {
 			this.selectCorrection_ComboBox.currentItem = 0
@@ -694,7 +738,7 @@ function GraXpertDialog(targetView, engine) {
 	this.title.margin = 6;
 	this.title.wordWrapping = true;
 	this.title.useRichText = true;
-	this.title.text = "<b>" + TITLE + " " + VERSION + "</b><br>GraXpert is an astronomical image processing program for extracting and removing gradients from the background of your astrophotos.<br>Visit GitHub <a href='" + GRAXPERT4PIX_URL + "'>GraXpert for pixinsight</a> for more information."
+	this.title.text = "<b>" + TITLE + " version " + VERSION + "</b><br>GraXpert is an astronomical image processing program for extracting and removing gradients from the background of your astrophotos.<br><a href='" + GRAXPERT4PIX_URL + "'>Visit GitHub GraXpert for pixinsight</a>"
 
 	// create a view picker
 	this.viewList = new ViewList(this);
@@ -737,30 +781,33 @@ function GraXpertDialog(targetView, engine) {
 	this.smoothing_Sizer.addSpacing(8);
 	this.smoothing_Sizer.add(this.resetSmooth);
 
-	// create select AI combobox
+	// create select AI combobox when several models locally installed
+	this.selectAI_Sizer = false
 	this.AIModels = getAIModels()
-	this.AIModels.unshift("Default")
-	this.selectAI_Label = new Label( this );
-	this.selectAI_Label.text = "AI version:";
-	this.selectAI_Label.useRichText = true;
-	this.selectAI_Label.textAlignment = TextAlign_Right | TextAlign_VertCenter;
-	this.selectAI_Label.setMaxWidth( this.font.width( this.selectAI_Label.text ) );
-	this.selectAI_Label.setFixedWidth( this.font.width( this.selectAI_Label.text ) );
-	this.selectAI_ComboBox = new ComboBox( this );
-	this.selectAI_ComboBox.editEnabled = false
-	this.selectAI_ComboBox.toolTip = "<p>Specify the version of the AI model to use. "+
-									 "If not provided, it defaults to the latest available version. "+
-									 "You can choose only locally available versions. "+
-									 "Run GraXpert UI to download remote versions.</p>";
-	this.AIModels.forEach((element) => this.selectAI_ComboBox.addItem(element))
-	this.selectAI_ComboBox.onItemSelected = ( index ) => {
-		GraXpertParameters.ai_model = ((index > 0) ? this.AIModels[index] : "")
+	if ( this.AIModels.length > 1 ) {
+		this.AIModels.unshift("Default")
+		this.selectAI_Label = new Label( this );
+		this.selectAI_Label.text = "AI version:";
+		this.selectAI_Label.useRichText = true;
+		this.selectAI_Label.textAlignment = TextAlign_Right | TextAlign_VertCenter;
+		this.selectAI_Label.setMaxWidth( this.font.width( this.selectAI_Label.text ) );
+		this.selectAI_Label.setFixedWidth( this.font.width( this.selectAI_Label.text ) );
+		this.selectAI_ComboBox = new ComboBox( this );
+		this.selectAI_ComboBox.editEnabled = false
+		this.selectAI_ComboBox.toolTip = "<p>Specify the version of the AI model to use. "+
+										 "If not provided, it defaults to the latest available version. "+
+										 "You can choose only locally available versions. "+
+										 "Run GraXpert UI to download remote versions.</p>";
+		this.AIModels.forEach((element) => this.selectAI_ComboBox.addItem(element))
+		this.selectAI_ComboBox.onItemSelected = ( index ) => {
+			GraXpertParameters.ai_model = ((index > 0) ? this.AIModels[index] : "")
+		}
+		this.selectAI_Sizer = new HorizontalSizer;
+		this.selectAI_Sizer.spacing = 4;
+		this.selectAI_Sizer.add( this.selectAI_Label );
+		this.selectAI_Sizer.add( this.selectAI_ComboBox );
+		this.selectAI_Sizer.addStretch();
 	}
-	this.selectAI_Sizer = new HorizontalSizer;
-	this.selectAI_Sizer.spacing = 4;
-	this.selectAI_Sizer.add( this.selectAI_Label );
-	this.selectAI_Sizer.add( this.selectAI_ComboBox );
-	this.selectAI_Sizer.addStretch();
 	
 	// create correction combobox
 	this.corrections = ["Default", "Subtraction", "Division"]
@@ -793,18 +840,11 @@ function GraXpertDialog(targetView, engine) {
 	}
 	
 	// create background checkbox
-	let graxpertPath = getGraXpertPath();
-	let advanced_mode = ( graxpertPath != undefined && graxpertPath.indexOf("GradXtractAI") > -1 )
-	if ( advanced_mode ) {
-		this.backgroundCheckBox = new CheckBox( this );
-		this.backgroundCheckBox.text = "Create background model";
-		this.backgroundCheckBox.toolTip = "<p>Create and open background model.</p>";
-		this.backgroundCheckBox.onClick = function( checked ) {
-		  GraXpertParameters.background = checked;
-		}
-	} else {
-		this.backgroundCheckBox = false;
-		GraXpertParameters.background = false;
+	this.backgroundCheckBox = new CheckBox( this );
+	this.backgroundCheckBox.text = "Create background model";
+	this.backgroundCheckBox.toolTip = "<p>Create and open background model.</p>";
+	this.backgroundCheckBox.onClick = function( checked ) {
+	  GraXpertParameters.background = checked;
 	}
 	
 	// create debug checkbox
@@ -907,7 +947,7 @@ function GraXpertDialog(targetView, engine) {
 	this.sizer.addSpacing(8);
 	this.sizer.add(this.viewList);
 	this.sizer.addSpacing(8);
-	this.sizer.add(this.selectAI_Sizer);
+	if ( this.selectAI_Sizer ) this.sizer.add(this.selectAI_Sizer);
 	this.sizer.addSpacing(8);
 	this.sizer.add(this.selectCorrection_Sizer);
 	this.sizer.addSpacing(8);
@@ -931,7 +971,6 @@ function GraXpertDialog(targetView, engine) {
 GraXpertDialog.prototype = new Dialog;
 
 function main() {
-
 	// prepare PiGraXpert local directory (save path and preferences)
 	if ( !File.directoryExists(GRAXPERT4PIX_HOME_DIR) ) {
 		Console.writeln("Create directory "+GRAXPERT4PIX_HOME_DIR)

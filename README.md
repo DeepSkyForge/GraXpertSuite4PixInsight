@@ -1,11 +1,11 @@
 Yet Another PixInsight script for GraXpert !
 
 GraXpert is an astronomical image processing program for extracting and removing gradients from the background of your astrophotos.
-GraXpert4Pix help you to run GraXpert from PixInsiht, retrieve result file and restore astrometic data from original photo.
+GraXpert4PixInsight help you to run GraXpert from PixInsiht, retrieve result file and restore astrometic data from original photo.
 
 Several options are available
 - Select target view from drop down list or ne instance button (triangle on bottom left)
-- Select AI version assuming AI models istalled on your system by GraXpert
+- Select AI version assuming AI models installed on your system by GraXpert
 - Select correction mode (Substraction or Division, GraXpert use Substraction by default)
 - Select smoothing (0 to 1, default 0.5)
 - Result replace target view or create a new view (default)
@@ -16,9 +16,12 @@ Several options are available
 - Select target view by drag and drop new instance button (triangle on bottom left)
 - Pause/Abort GraXpert execution by using Pause/Abort console button
 
+Coming soon
+- Import background in PixInsight (Beta version v1.0.0 of GraXpert script requiring Beta GraXpert version v2.0.3)
+
 Important notes:
 - On Windows, GraXpert splatch window hide PixInsight Pause/Abort pop-up. You have to press Enter even though you don't have access to the pop-up.
-- I never tested GraXpert4Pix on Mac or Linux system. Feedbacks are welcome.
+- I never tested GraXpert4Pix on Linux system. Feedbacks are welcome.
 
 For any issue with GraXpert4Pix open a case [here](https://github.com/AstroDeepSky/GraXpert4PixInsight/issues).
 
@@ -30,9 +33,8 @@ For any issue with GraXpert4Pix open a case [here](https://github.com/AstroDeepS
 	- Get more information from [www.graxpert.com](https://www.graxpert.com/)
 3. Process a photograpie using AI Interpolation Method.
 	- This will download and install AI model(s).
-3. Copy GraXpert4Pix src and rsc folders in PixInsight folder.
-	- Package avalable here
 4. Install GraXpert4Pix in PixInsight
+	- Copy GraXpert4PixInsight src and rsc folders in PixInsight folder.
 	- From PixInsight, select Menu SCRIPT > Feature scripts…
 	- Click Add and select folder C:/Program Files/PixInsight/src/scripts/PixGraXpert (adapt path for osMac and Linux).
 	- Click Ok and Done to finalize the installation.
