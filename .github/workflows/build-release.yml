@@ -7,7 +7,6 @@ on:
       - v*.*.*-beta.*
 
 jobs:
-  
   build-pixinsight-script:
     runs-on: ubuntu-latest
     steps:
