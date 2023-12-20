@@ -98,7 +98,7 @@
 #include "../AdP/WCSmetadata.jsh"
 
 #define TITLE "GraXpert script for PixInsight"
-#define VERSION "Beta v1.0.0"
+#define VERSION "v1.0.0-beta.2"
 
 // set GraXpert folder used to store path and preferences
 #ifeq __PI_PLATFORM__ MACOSX
@@ -119,6 +119,7 @@
 
 #define GRAXPERT4PIX_URL "https://github.com/AstroDeepSky/GraXpert4PixInsight/"
 #define GRAXPERT_LATEST_RELEASE "https://github.com/Steffenhir/GraXpert/releases/latest"
+#define GRAXPERT4PIX_API "https://api.github.com/repos/AstroDeepSky/GraXpert4PixInsight/releases/"
 
 #define GRAXPERT_PATH_CFG GRAXPERT4PIX_HOME_DIR + "/path.cfg"
 #define PREFERENCES GRAXPERT4PIX_HOME_DIR + "/preferences.cfg"
@@ -250,6 +251,32 @@ function getAIModels() {
 }
 
 
+// source PixInsightBenchmark/benchmark.js
+function gitHub()
+{
+	this.__base__ = NetworkTransfer;
+	this.__base__();
+	this.data = ""
+
+	this.onDownloadDataAvailable = function( data ) {
+		this.data += data
+		return true;
+	};
+	
+	this.getReleaseInfo = function(version) {
+		let url = GRAXPERT4PIX_API + version
+		// Console.writeln(url)
+		this.setURL( url );
+		this.data = ""
+		this.download()
+		var response = JSON.parse(this.data)
+		this.data = ""
+		return response
+	}
+}
+
+gitHub.prototype = new NetworkTransfer;
+
 /*
  * define a global variable containing script's parameters
  */
@@ -267,10 +294,28 @@ let GraXpertParameters = {	// stores the current parameters values into the scri
 	load: function () {
 		// log GraXpert script version
 		Console.writeln("<br><b>GraXpert load parameters:</b> ")
-		Console.writeln(TITLE + " version " + VERSION)
+		
+		// check version
+		try {
+			let git = new gitHub();
+			let latestRelease = git.getReleaseInfo("latest")
+			let currentRelease = git.getReleaseInfo("tags/"+VERSION)
+			if ( currentRelease.hasOwnProperty("message") && currentRelease["message"] == "Not Found" ) {
+				Console.warningln(TITLE + " version " + VERSION + " (Not yet published)")
+			} else if ( latestRelease["published_at"] > currentRelease["published_at"] ) {
+				Console.warningln("New release "+latestRelease["tag_name"]+" available on GitHub")
+				Console.warningln("Visit https://github.com/AstroDeepSky/GraXpert4PixInsight")
+			} else {
+				Console.writeln(TITLE + " version " + VERSION + " ("+currentRelease["published_at"]+")")
+			}
+		}
+		catch (error) {
+			Console.writeln("Check latest version failed (Check your internet connection)")
+			Console.writeln(error)
+		}
 		
 		// alert user in case of Beta version
-		if ( VERSION.toLowerCase().startsWith("beta") ) {
+		if ( VERSION.toLowerCase().search("beta") != -1 ) {
 			Console.show()
 			Console.warningln("Please note you are using a Beta version!")
 			Console.warningln("THIS VERSION REQUIRES GraXpert BETA v2.0.3")
