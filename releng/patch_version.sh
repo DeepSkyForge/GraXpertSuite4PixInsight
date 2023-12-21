@@ -16,3 +16,5 @@ else
   echo "ERROR: Could not retrieve git release tag"
   exit 1
 fi
+
+echo "Define VERSION as \"$version\" in \"$filename\"."
