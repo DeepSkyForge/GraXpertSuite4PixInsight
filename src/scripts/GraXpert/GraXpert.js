@@ -73,6 +73,10 @@
 // - Avoid save path to temporary file.
 // v0.0.8 18/12/2023
 // - Integration of GraXpert pre-release v2.0.3.
+// v1.0.0-beta.1 19/12/2024
+// - Pre-release Beta 1
+// v1.0.0-beta.2 20/12/2024
+// - Add automatic version check.
 //
 // For any support or suggestion related to this script please refer to
 // GitHub https://github.com/AstroDeepSky/GraXpert4PixInsight
@@ -98,7 +102,9 @@
 #include "../AdP/WCSmetadata.jsh"
 
 #define TITLE "GraXpert script for PixInsight"
-#define VERSION "v1.0.0-beta.2"
+
+// below line will be replaced during release build from GitHub
+#define VERSION "vx.y.z-beta.x"
 
 // set GraXpert folder used to store path and preferences
 #ifeq __PI_PLATFORM__ MACOSX
@@ -304,9 +310,10 @@ let GraXpertParameters = {	// stores the current parameters values into the scri
 				Console.warningln(TITLE + " version " + VERSION + " (Not yet published)")
 			} else if ( latestRelease["published_at"] > currentRelease["published_at"] ) {
 				Console.warningln("New release "+latestRelease["tag_name"]+" available on GitHub")
-				Console.warningln("Visit https://github.com/AstroDeepSky/GraXpert4PixInsight")
+				Console.warningln("Visit "+GRAXPERT4PIX_URL)
+				Console.warningln("Download "+GRAXPERT4PIX_URL+"releases/download/"+VERSION+"/GraXpert.js")
 			} else {
-				Console.writeln(TITLE + " version " + VERSION + " ("+currentRelease["published_at"]+")")
+				Console.writeln(TITLE + " version " + VERSION + " ("+currentRelease["published_at"].substring(0, 16).replace("T"," ")+")")
 			}
 		}
 		catch (error) {

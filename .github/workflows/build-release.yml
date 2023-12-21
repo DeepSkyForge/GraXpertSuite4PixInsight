@@ -12,6 +12,10 @@ jobs:
     steps:
       - name: checkout repository
         uses: actions/checkout@v3
+      - name: patch version
+        run: |
+          chmod u+x ./releng/patch_version.sh && \
+          ./releng/patch_version.sh ./src/scripts/GraXpert/GraXpert.js
       - name: list files
         run: |
           ls -R
