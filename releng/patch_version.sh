@@ -11,7 +11,7 @@ IFS=' ' read -r version release <<< $tag
 
 if [[ $release != "" && $version != "" ]]; 
 then
-  sed -i "/^#define VERSION /c\#define VERSION \"$version\"" "$filename"
+  sed -i "/^#define VERSION /c\#define VERSION '$version'" "$filename"
 else
   echo "ERROR: Could not retrieve git release tag"
   exit 1
