@@ -104,7 +104,7 @@
 #define TITLE "GraXpert script for PixInsight"
 
 // below line will be replaced during release build from GitHub
-#define VERSION "vx.y.z-beta.x"
+#define VERSION "v1.0.0-beta.3"
 
 // set GraXpert folder used to store path and preferences
 #ifeq __PI_PLATFORM__ MACOSX
@@ -325,8 +325,8 @@ let GraXpertParameters = {	// stores the current parameters values into the scri
 		if ( VERSION.toLowerCase().search("beta") != -1 ) {
 			Console.show()
 			Console.warningln("Please note you are using a Beta version!")
-			Console.warningln("THIS VERSION REQUIRES GraXpert BETA v2.0.3")
-			Console.warningln("THIS VERSION IS NOT COMPATIBLE WITH GraXpert v2.0.2")
+			Console.warningln("THIS VERSION REQUIRES GraXpert BETA v2.0.3test or higher.")
+			Console.warningln("THIS VERSION IS NOT COMPATIBLE WITH GraXpert v2.0.2.")
 		}
 		let errors = 0
 		
