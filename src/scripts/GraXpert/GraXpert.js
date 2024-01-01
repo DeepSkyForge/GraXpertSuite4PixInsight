@@ -112,7 +112,7 @@
 #define TITLE "GraXpert script for PixInsight"
 
 // below line will be replaced during release build from GitHub
-#define VERSION "v1.0.0"
+#define VERSION "v1.0.0-beta.4"
 
 // set GraXpert folder used to store path and preferences
 #ifeq __PI_PLATFORM__ MACOSX
