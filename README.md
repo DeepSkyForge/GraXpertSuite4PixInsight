@@ -19,10 +19,8 @@ Several options are available
 - Possibility to launch GraXpert UI from script dialog box.
 
 Important notes:
-- GraXpert4PixInsight v1.0.0 requires GraXpert v2.1.1 or higher.
+- GraXpert4PixInsight v1.0.0 requires GraXpert v2.2.0 or higher.
 - GraXpert4PixInsight v1.0.0 is not compatible with GraXpert v2.0.2.
-- For GraXpert v2.0.2, use GraXpert4PixInsight v0.0.7.
-- I never tested GraXpert4PixInsight on Linux system. Feedbacks are welcome.
 
 For any issue with GraXpert4PixInsight open an issue [here](https://github.com/AstroDeepSky/GraXpert4PixInsight/issues).
 
