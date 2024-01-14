@@ -11,7 +11,7 @@ GraXpert4PixInsight help you to run GraXpert from PixInsiht, retrieve processed 
 - Processed image replace target view or create a new view (default).
 - Retrieve and display background model in PixInsight.
 - Open PixInsight photo in GraXpert for manual processing (all interpolation methods available).
-- Import GraXpert processed file and backgroung and restore astrometric data (whatever interpolation method used in GraXpert).
+- Import GraXpert processed file and backgroung and restore astrometric data (whatever interpolation method).
 - Transparent photo reprocessing using PixInsight parameters and GraXpert UI preferences (interpolation method, grid...). 
 - Check GraXpert preferences in one click (no need to open GraXpert).
 - Support process icon through drag and drop new instance button (triangle on bottom left).
