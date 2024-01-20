@@ -43,16 +43,6 @@
 // POSSIBILITY OF SUCH DAMAGE.
 // ----------------------------------------------------------------------------
 
-// ======== #release information ==============================================
-// 
-// v0.0.1 12/11/23 
-// - First release based on GraXpert version 2.0.2.
-//
-// For any support or suggestion related to this script please refer to
-// GitHub https://github.com/AstroDeepSky/GraXpert4PixInsight
-//
-// ============================================================================
-
 #feature-id    GraXpertUILauncher : GraXpert Suite > UI Launcher
 
 #feature-info  GraXpert UI application.<br/>

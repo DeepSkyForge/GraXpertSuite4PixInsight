@@ -93,7 +93,7 @@
 // - Execute global context open dialog box (can be used to open process icon in dialog box).
 //
 // For any support or suggestion related to this script please refer to
-// GitHub https://github.com/AstroDeepSky/GraXpert4PixInsight
+// GitHub https://github.com/DeepSkyForge/GraXpertSuite4PixInsight
 //
 // ============================================================================
 
@@ -130,10 +130,8 @@
 #define GRAXPERT_AI_MODELS File.homeDirectory + "/.local/share/GraXpert/ai-models/*"
 #endif
 
-#define GRAXPERT4PIX_DOWNLOAD "https://github.com/AstroDeepSky/GraXpert4PixInsight/releases/"
-#define GRAXPERT4PIX_WIKI "https://github.com/AstroDeepSky/GraXpert4PixInsight/wiki/"
+#define GRAXPERT4PIX_WIKI "https://github.com/DeepSkyForge/GraXpertSuite4PixInsight/wiki/"
 #define GRAXPERT_RELEASES "https://github.com/Steffenhir/GraXpert/releases/"
-#define GRAXPERT4PIX_API "https://api.github.com/repos/AstroDeepSky/GraXpert4PixInsight/releases/"
 #define GRAXPERT_MINIMAL_VERSION "v2.2.1"
 
 #define GRAXPERT_PATH_CFG GRAXPERT4PIX_HOME_DIR + "/path.cfg"
