@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xri version="1.0">
+	<description>
+		<p>PixInsight scripts from DeepSkyForge.com</p>
+		<p>Copyright (c) 2024 Joel Vallier, All Rights Reserved.</p>
+   </description>
+   <platform os="all" arch="noarch" version="1.8.9-1:1.9.10">
+      <package fileName="_ZIP_FILENAME_" sha1="_SHA1_" type="script" releaseDate="_DATE_">
+         <title>
+            GraXpert Suite for PixInsight
+         </title>
+         <remove>
+			rsc/icons/script/GraXpertSuite/GraXpert.svg
+			src/scripts/GraXpertSuite/WCSmetadata.jsh,
+			src/scripts/GraXpertSuite/GraXpert4PixInsight.js,
+            src/scripts/GraXpertSuite/GraXpertAILauncher.js,
+			src/scripts/GraXpertSuite/GraXpertUIImport.js,
+			src/scripts/GraXpertSuite/GraXpertUIExport.js,
+			src/scripts/GraXpertSuite/GraXpertUILauncher.js,
+			src/scripts/GraXpertSuite/GraXpertUIProcess.js,
+            src/scripts/GraXpertSuite/GraXpertAILauncher.xsgn,
+			src/scripts/GraXpertSuite/GraXpertUIImport.xsgn,
+			src/scripts/GraXpertSuite/GraXpertUIExport.xsgn,
+			src/scripts/GraXpertSuite/GraXpertUILauncher.xsgn,
+			src/scripts/GraXpertSuite/GraXpertUIProcess.xsgn,
+         </remove>
+         <description>
+            <p>GraXpert Suite, a dedicated set of PixInsight scripts for GraXpert users.</p>
+            <p>GraXpert is an astronomical image processing program for extracting and removing gradients from the background of your astrophotos.</p>
+            <p>Copyright (c) 2024 Joel Vallier, All Rights Reserved.</p>
+         </description>
+      </package>
+   </platform>
+</xri>

@@ -1,12 +1,9 @@
 // ----------------------------------------------------------------------------
-// GraXpert JavaScript Runtime
-// ----------------------------------------------------------------------------
-// GraXpert.js - Released 2023-11-12T16:39:54Z
+// GraXpert Suite for PixInsight (JavaScript Runtime)
 // ----------------------------------------------------------------------------
 //
-// PixInsight script to run GraXpert command line for background extraction.
-//
-// Copyright (c) 2023 Joël Vallier (joel.vallier@gmail.com)
+// GraXpert4PixInsight.js part of GraXpert Suite for PixInsight
+// Copyright (c) 2024 Joël Vallier (joel.vallier@gmail.com)
 //
 // Redistribution and use in both source and binary forms, with or without
 // modification, is permitted provided that the following conditions are met:
@@ -92,17 +89,16 @@
 // - Fix smoothin parameter in case of drag & drop new instance on target view.
 // - Add automatic strech.
 // - Add GraXpert UI launching, export, import, reprocess and view GraXpert preferences.
+// v1.2.0 19/01/2024
+// - Execute global context open dialog box (can be used to open process icon in dialog box).
 //
 // For any support or suggestion related to this script please refer to
 // GitHub https://github.com/AstroDeepSky/GraXpert4PixInsight
 //
 // ============================================================================
 
-#feature-id    GraXpert : Utilities > GraXpert
-
-#feature-icon  @script_icons_dir/GraXpert.svg
-
-#feature-info  GraXpert AI image processing.<br/>
+#ifndef __GRAXPERT4PIXINSIGHT_jsh
+#define __GRAXPERT4PIXINSIGHT_jsh
 
 #include <pjsr/ColorSpace.jsh>
 #include <pjsr/DataType.jsh>
@@ -112,13 +108,10 @@
 #include <pjsr/NumericControl.jsh>
 #include <pjsr/ProcessError.jsh>
 #include <pjsr/UndoFlag.jsh>
-
-#include "../AdP/WCSmetadata.jsh"
-
-#define TITLE "GraXpert script for PixInsight"
+#include "WCSmetadata.jsh"
 
 // below line will be replaced during release build from GitHub
-#define VERSION "v1.1.0"
+#define VERSION "v1.2.0"
 
 // set GraXpert folder used to store path and preferences
 #ifeq __PI_PLATFORM__ MACOSX
@@ -148,66 +141,6 @@
 
 #define DEFAULT_AUTOSTRETCH_SCLIP  -2.80
 #define DEFAULT_AUTOSTRETCH_TBGND   0.25
-
-/*
- * define some utils
- */
- function checkGraXpert4PixVersion() {
-	// network service
-	function gitHub()
-	{
-		this.__base__ = NetworkTransfer;
-		this.__base__();
-		this.data = "";
-
-		this.onDownloadDataAvailable = function( data ) {
-			this.data += data;
-			return true;
-		};
-		
-		this.getReleaseInfo = function(version) {
-			let url = GRAXPERT4PIX_API + version
-			// Console.writeln(url)
-			this.setURL( url );
-			this.data = "";
-			this.download();
-			var response = JSON.parse(this.data);
-			this.data = "";
-			return response;
-		};
-	};
-	gitHub.prototype = new NetworkTransfer;
-	
-	Console.writeln("<br><b>Checking version:</b> ");
-	 
-	// check version
-	try {
-		let git = new gitHub();
-		let latestRelease = git.getReleaseInfo("latest");
-		let currentRelease = git.getReleaseInfo("tags/"+VERSION);
-		if ( currentRelease.hasOwnProperty("message") && currentRelease["message"] == "Not Found" ) {
-			Console.warningln(TITLE + " version " + VERSION + " (Not yet published)");
-		} else if ( latestRelease["published_at"] > currentRelease["published_at"] ) {
-			Console.warningln("New release "+latestRelease["tag_name"]+" available on GitHub");
-			Console.warningln("Download "+GRAXPERT4PIX_DOWNLOAD);
-		} else {
-			Console.writeln(TITLE + " version " + VERSION + " ("+currentRelease["published_at"].substring(0, 16).replace("T"," ")+")");
-		};
-	}
-	catch (error) {
-		Console.writeln("Check latest version failed (Check your internet connection)");
-		if ( !error.message.contains("JSON.parse") ) Console.writeln(error);
-	};
-	
-	// alert user in case of Beta version
-	if ( VERSION.toLowerCase().contains("beta") ) {
-		Console.show();
-		Console.warningln("Please note you are using a Beta version!");
-		Console.warningln("THIS VERSION REQUIRES GraXpert " + GRAXPERT_MINIMAL_VERSION + " OR HIGHER.");
-		Console.warningln("THIS VERSION IS NOT COMPATIBLE WITH GraXpert v2.0.2.");
-	};
-};
-
 
 /*
  * define a global variable containing script's parameters
@@ -1226,7 +1159,9 @@ function GraXpert4PixEngine() {
 	};
 };
 
+#endif	// __GRAXPERT4PIXINSIGHT_jsh
 
+#ifdef __GRAXPERT4PIXINSIGHT_DIALOG__
 /*
  * GraXpert dialog interface
  */
@@ -1676,61 +1611,4 @@ function GraXpert4PixDialog(targetView, engine) {
 
 GraXpert4PixDialog.prototype = new Dialog;
 
-function main() {
-	// check version
-	checkGraXpert4PixVersion();
-
-	// script should not run in global mode
-	if (Parameters.isGlobalTarget) {
-		// pop-up alert
-		let mb = new MessageBox(
-				"GraXpert can not run in global context.",
-				TITLE,
-				StdIcon_Error,
-				StdButton_Ok
-		);
-		mb.execute();
-		Console.hide();
-		return;
-	};
-	Console.hide();
-	
-	// get target view
-	if (Parameters.isViewTarget) {
-		var targetView = Parameters.targetView;
-	} else {
-		var targetView = ImageWindow.activeWindow.currentView;
-	};
-	
-	// check if view selected
-	if ( !targetView || !targetView.id ) {
-		// pop-up alert
-		let mb = new MessageBox(
-				"<p><center>No view selected to execute GraXpert.</center></p>"+
-				"<p><center>Click Ok to continue.</center></p>",
-				TITLE,
-				StdIcon_NoIcon,
-				StdButton_Ok
-		);
-		mb.execute();
-	};
-
-	// initialize parameters
-	if (!GraXpert4PixParams.init()) {
-		return;
-	};
-	
-	// perform the script on the target view
-	let engine = new GraXpert4PixEngine()
-	if (Parameters.isViewTarget) {
-          // apply process
-          engine.execute(targetView);
-    } else {
-          // direct context, create and show the dialog
-          let dialog = new GraXpert4PixDialog(targetView, engine);
-          dialog.execute();
-    };
-
-};
-
-main();
+#endif	// __GRAXPERT4PIXINSIGHT_DIALOG__
