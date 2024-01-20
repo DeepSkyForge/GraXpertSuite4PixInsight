@@ -30,7 +30,7 @@ GraXpertSuite4PixInsight help you to run GraXpert from PixInsiht, retrieve proce
 	- Download available [here](https://github.com/Steffenhir/GraXpert/releases/latest)
 2. Install GraXpertSuite4PixInsight in PixInsight
 	- Menu RESOURCES > Updates > Manage Repositories.
-	- Add > URL: https://pixinsight.deepskyforge.com/repository/ (DON'T FORGET TRAILING SLASH "/").
+	- Add > URL: https://pixinsight.deepskyforge.com/update/graxpert/ (DON'T FORGET TRAILING SLASH "/").
 	- Click OK / OK.
 	- Menu RESOURCES > Updates > Check for Updates.
 	- You should see an update from pixinsight.deepskyforge.com, click on APPLY.
