@@ -27,13 +27,10 @@ def extract_files_from_remove_section(xml_file):
         else:
             raise ValueError("<remove> section not found in the XML.")
     except Exception as e:
-        raise ValueError(f"{e}")
+        raise ValueError(f"XML Parsing {xml_file}: {e}")
 
 def save_list_to_zip(files_list, zip_file, output_directory):
     try:
-        # Create the output directory if it doesn't exist
-        os.makedirs(output_directory, exist_ok=True)
-        
         # build zip for manual install
         print("\nBuild zip for manual install")
         zip_file_path = os.path.join(output_directory, zip_file)
@@ -44,7 +41,6 @@ def save_list_to_zip(files_list, zip_file, output_directory):
                 # Check if the file exists
                 if os.path.exists(file):
                     # Get the relative path for the file in the zip archive
-                    rel_path = os.path.relpath(file, os.path.commonpath([file] + files_list))
                     zipf.write(file, os.path.basename(file))
                     print(f"+ {os.path.basename(file)}")
                 else:
@@ -56,14 +52,14 @@ def save_list_to_zip(files_list, zip_file, output_directory):
         zip_file_path = os.path.join(output_directory, zip_file_with_date)
         with zipfile.ZipFile(zip_file_path, 'w', zipfile.ZIP_DEFLATED) as zipf:
             for file in files_list:
+                if not file.startswith("src/scripts/GraXpertSuite/"):
+                    raise Exception(f"Invalid path in file {file} found in updates file")
                 if file == '':
                     continue
                 # Check if the file exists
                 if os.path.exists(file):
-                    # Get the relative path for the file in the zip archive
-                    rel_path = os.path.relpath(file, os.path.commonpath([file] + files_list))
-                    zipf.write(file, os.path.join(rel_path))
-                    print(f"+ {rel_path}")
+                    zipf.write(file, file)
+                    print(f"+ {file}")
                 else:
                     raise FileNotFoundError(f"File '{file}' not found.")
 
@@ -111,26 +107,30 @@ def replace_and_save(source_path, dest_directory, zip_file_path):
     file_content = file_content.replace("_DATE_", current_date)
 
     # Build the destination file path with the same name in the specified directory
-    dest_filename = os.path.join(dest_directory, os.path.basename(source_path))
+    dest_filename = os.path.join(dest_directory, "updates.xri")
 
     # Write the modified content to the destination file
     with open(dest_filename, 'w') as dest_file:
         dest_file.write(file_content)
 
-    print(f"File saved successfully in {dest_filename}\n")
+    print(f"\n===> {dest_filename}")
 
 
 if __name__ == "__main__":
     try:
-        updates_xml_file = "updates.xri"
-        output_directory = "repository"
+        output_directory = os.path.join("repository", "update-beta")
         if os.path.exists(output_directory):
             shutil.rmtree(output_directory)
-        files_list = extract_files_from_remove_section(updates_xml_file)
-        if files_list:
-            zip_file_path = save_list_to_zip(files_list, "GraXpertSuite.zip", output_directory)
-            replace_and_save(updates_xml_file, output_directory, zip_file_path)
+        for updates_xml_file in ["updates.xri", "updates-suite.xri"]:
+            files_list = extract_files_from_remove_section(updates_xml_file)
+            destination = os.path.join(output_directory, updates_xml_file.replace("updates", "graxpert").replace(".xri",""))
+            os.makedirs(destination, exist_ok=True)
+            if files_list:
+                zip_file_path = save_list_to_zip(files_list, "GraXpertSuite.zip", destination)
+                replace_and_save(updates_xml_file, destination, zip_file_path)
+            shutil.copy(os.path.join(output_directory, "../index.html"), destination)
+        shutil.copy(os.path.join(output_directory, "../index.html"), output_directory)
     except ValueError as ve:
         print(ve)
+    print()
 
-# input("Press ENTER to Quit")

@@ -2,7 +2,7 @@
 // GraXpert Suite for PixInsight (JavaScript Runtime)
 // ----------------------------------------------------------------------------
 //
-// GraXpertAILauncher.js part of GraXpert Suite for PixInsight
+// GraXpertUIPreferences.js part of GraXpert Suite for PixInsight
 // Copyright (c) 2024 Joël Vallier (joel.vallier@gmail.com)
 //
 // Redistribution and use in both source and binary forms, with or without
@@ -43,56 +43,23 @@
 // POSSIBILITY OF SUCH DAMAGE.
 // ----------------------------------------------------------------------------
 
-#feature-id    GraXpertAllInOne : Utilities > GraXpert (All In One)
+#feature-id    GraXpertUIPreferences : GraXpert Suite > UI Preferences
 
-#feature-icon  @script_icons_dir/GraXpert.svg
+#feature-info  GraXpert UI preferences.<br/>
 
-#feature-info  GraXpert AI image processing.<br/>
+#define TITLE "GraXpert UI Preferences"
 
-#define TITLE "GraXpert (All in One)"
-
-#define __GRAXPERT4PIXINSIGHT_DIALOG__
 #include "GraXpert4PixInsight.js"
 
 function main() {
-	Console.hide();
-	
-	// get target view
-	if (Parameters.isViewTarget) {
-		var targetView = Parameters.targetView;
-	} else {
-		var targetView = ImageWindow.activeWindow.currentView;
-	};
-	
-	// check if view selected
-	if ( !targetView || !targetView.id ) {
-		// pop-up alert
-		let mb = new MessageBox(
-				"<p><center>No view selected to execute GraXpert.</center></p>"+
-				"<p><center>Click Ok to continue.</center></p>",
-				TITLE,
-				StdIcon_NoIcon,
-				StdButton_Ok
-		);
-		mb.execute();
-	};
-
 	// initialize parameters
 	if (!GraXpert4PixParams.init()) {
-		return;
-	};
+		return
+	}
 	
 	// perform the script on the target view
 	let engine = new GraXpert4PixEngine()
-	if (Parameters.isViewTarget) {
-          // apply process
-          engine.execute(targetView);
-    } else {
-          // direct context, create and show the dialog
-          let dialog = new GraXpert4PixDialog(targetView, engine);
-          dialog.execute();
-    };
-
-};
+	engine.preferences()
+}
 
 main();

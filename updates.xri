@@ -3,24 +3,23 @@
 	<description>
 		<p>PixInsight scripts from DeepSkyForge.com</p>
 		<p>Copyright (c) 2024 Joel Vallier, All Rights Reserved.</p>
-   </description>
-   <platform os="all" arch="noarch" version="1.8.9-1:1.9.10">
-      <package fileName="_ZIP_FILENAME_" sha1="_SHA1_" type="script" releaseDate="_DATE_">
-         <title>
-            GraXpert All In One for PixInsight
-         </title>
-         <remove>
-			rsc/icons/script/GraXpertSuite/GraXpert.svg,
-			src/scripts/GraXpertSuite/WCSmetadata.jsh,
-            src/scripts/GraXpertSuite/GraXpert4PixInsight.js,
-            src/scripts/GraXpertSuite/GraXpertAllInOne.js,
-			src/scripts/GraXpertSuite/GraXpertAllInOne.xsgn,
-         </remove>
-         <description>
-            <p>GraXpert All In One, a dedicated PixInsight script for GraXpert users.</p>
-            <p>GraXpert is an astronomical image processing program for extracting and removing gradients from the background of your astrophotos.</p>
-            <p>Copyright (c) 2024 Joel Vallier, All Rights Reserved.</p>
-         </description>
-      </package>
-   </platform>
+	</description>
+	<platform os="all" arch="noarch" version="1.8.9-1:1.9.10">
+		<package fileName="_ZIP_FILENAME_" sha1="_SHA1_" type="script" releaseDate="_DATE_">
+			<title>
+				GraXpert All In One for PixInsight
+			</title>
+			<remove>
+				src/scripts/GraXpertSuite/WCSmetadata.jsh,
+				src/scripts/GraXpertSuite/GraXpert4PixInsight.js,
+				src/scripts/GraXpertSuite/GraXpertAllInOne.js,
+				src/scripts/GraXpertSuite/GraXpertAllInOne.xsgn,
+			</remove>
+			<description>
+				<p>GraXpert All In One, a dedicated PixInsight script for GraXpert users.</p>
+				<p>GraXpert is an astronomical image processing program for extracting and removing gradients from the background of your astrophotos.</p>
+				<p>Copyright (c) 2024 Joel Vallier, All Rights Reserved.</p>
+			</description>
+		</package>
+	</platform>
 </xri>

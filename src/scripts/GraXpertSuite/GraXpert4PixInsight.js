@@ -108,7 +108,6 @@
 #include <pjsr/NumericControl.jsh>
 #include <pjsr/ProcessError.jsh>
 #include <pjsr/UndoFlag.jsh>
-#include "WCSmetadata.jsh"
 
 // below line will be replaced during release build from GitHub
 #define VERSION "v1.2.0"
@@ -596,6 +595,8 @@ function GraXpert4PixEngine() {
 		};
 	};
 	
+	// load library inside engine
+	#include "WCSmetadata.jsh"
 	this.copyCoordinates = function (reference, processed) {
 		Console.writeln("<br><b>Copy coordinates:</b>");
 		// Extract metadata
@@ -1093,7 +1094,7 @@ function GraXpert4PixEngine() {
 			// ai-model
 			"ai_version": "[x] AI version",
 			// misc.
-			"graxpert_version": "[x] GraXpert version",
+			// "graxpert_version": "[x] GraXpert version", // version not properly updated / problem to be reported to GraXpert team / Information hidden for the moment
 			"working_dir": "[ ] Working directory",
 			"width": "[ ] Width",
 			"height": "[ ] Height",
@@ -1201,7 +1202,7 @@ function GraXpert4PixDialog(targetView, engine) {
 		} else if (engine.preferences(true) > 0) {
 			this.preferencesButton.icon = this.scaledResource( ":/icons/list-error.png" );
 		} else {
-			this.preferencesButton.icon = this.scaledResource( ":/icons/list-info.png" );
+			this.preferencesButton.icon = this.scaledResource( ":/icons/list.png" );
 		};
 	};
 	
@@ -1233,7 +1234,7 @@ function GraXpert4PixDialog(targetView, engine) {
 	this.title.margin = 6;
 	this.title.wordWrapping = true;
 	this.title.useRichText = true;
-	this.title.text = "<b>" + TITLE + " version " + VERSION + "</b><br>GraXpert is an astronomical image processing program for extracting and removing gradients from the background of your astrophotos.<br><a href='" + GRAXPERT4PIX_WIKI + "'>Visit GitHub GraXpert for pixinsight</a>";
+	this.title.text = "<b>" + TITLE + " version " + VERSION + "</b><br>GraXpert is an astronomical image processing program for extracting and removing gradients from the background of your astrophotos.<br><a href='" + GRAXPERT4PIX_WIKI + "'>Visit GitHub GraXpert Suite for PixInsight</a>";
 
 	// create a view picker
 	this.viewList = new ViewList(this);

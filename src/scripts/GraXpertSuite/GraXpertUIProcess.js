@@ -75,16 +75,13 @@ function main() {
 	if ( !targetView || !targetView.id ) {
 		// pop-up alert
 		let mb = new MessageBox(
-				"<p><center>No view selected to restore astronomic data.</center></p>"+
-				"<p><center>Click Ok to continue.</center></p>",
+				"<p><center>No view selected to process GraXpert UI.</center></p>",
 				TITLE,
 				StdIcon_NoIcon,
-				StdButton_Ok,
-				StdButton_Cancel
+				StdButton_Ok
 		);
-		if (mb.execute() == StdButton_Cancel) {
-			return
-		}
+		mb.execute()
+		return
 	}
 
 	// initialize parameters
