@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>DeepSkyForge Repository</title>
+	<style>
+        body {
+            background-color: black;
+            color: white;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+		
+		a {
+            color: yellow;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+	</style>
+</head>
+<body>
+	<h1><center>Welcome to DeepSkyForge Repository<center></h1>
+	<p><center>
+		To install GraXpert script in PixInsight, please use one of the below URL <br>
+		in PixInsight RESOURCES > Updates > Manage Repositories <sup><a href="#note1">(1)</a></sup><br>
+		<u>Script requires PixInsight version 1.8.9-2 build 1597 or higher</u><br>
+		<strong style="color: red;">(DON'T FORGET TRAILING SLASH "/")</strong>
+	</center></p>
+    <p><center><b>GraXpert All in One</b><br><a class="copyLink" href="https://pixinsight.deepskyforge.com/update/graxpert/">
+		https://pixinsight.deepskyforge.com/update/graxpert/</a><br>
+		<small>(Will add new entry "GraXpert All in One" in SCRIPTS > Utilities)</small>
+	</center></p>
+	<p><center><b>GraXpert Suite</b><br><a class="copyLink" href="https://pixinsight.deepskyforge.com/update/graxpert-suite/">
+		https://pixinsight.deepskyforge.com/update/graxpert-suite/</a><br>
+		<small>(Will add a new sub-menu "GraXpert" in SCRIPTS)</small>
+	</center></p>
+	<p><center>
+		<img src="https://www.deepskyforge.com/images/dialogbox.png" alt="GraXpert All in One dialog box">
+	</center></p>
+	<p><center>-*-</center></p>
+	<p><center>
+		<b>More information available on GitHub GraXpert Suite for PixInsight</b><br>
+		<a href="https://github.com/DeepSkyForge/GraXpertSuite4PixInsight/wiki">Full script description</a><br>
+		<a href="https://github.com/DeepSkyForge/GraXpertSuite4PixInsight/issues">Support</a>
+	</center></p>
+	<p><center>-*-</center></p>
+	<p><center>
+		<b>Manual install possible with below ZIP files</b><br>
+		<a href="https://pixinsight.deepskyforge.com/update/graxpert/GraXpertSuite.zip">GraXpert All in One</a><br>
+		<a href="https://pixinsight.deepskyforge.com/update/graxpert-suite/GraXpertSuite.zip">GraXpert Suite</a>
+	</center></p>
+	<p><center>-*-</center></p>
+	<p id="note1"><center><small><small>Note 1: </small> All scripts are signed using Certified PixInsight Developer Id JoelVallier</small></center></p>
+	<script>
+		// Get all elements with the class "copyLink"
+		var copyLinks = document.querySelectorAll(".copyLink");
+
+		// Add a click event handler to each link
+		copyLinks.forEach(function(link) {
+			link.addEventListener("click", function(event) {
+				// Prevent the default link click behavior (opening the link)
+				event.preventDefault();
+
+				// Get the URL of the clicked link
+				var linkURL = link.href;
+
+				// Call the function to copy the link to the clipboard
+				copyToClipboard(linkURL);
+			});
+		});
+
+		// Reusable function to copy text to clipboard
+		function copyToClipboard(text) {
+			// Create a temporary textarea element
+			var textarea = document.createElement("textarea");
+			textarea.value = text;
+
+			// Add the textarea element to the page
+			document.body.appendChild(textarea);
+
+			// Select the text in the textarea
+			textarea.select();
+
+			// Copy the selected text to the clipboard
+			document.execCommand("copy");
+
+			// Remove the textarea element from the page
+			document.body.removeChild(textarea);
+
+			// Optional: Display a message or perform other actions after copying
+			alert("Below link copied to clipboard\n"+text);
+		}
+	</script>
+</body>
+</html>
