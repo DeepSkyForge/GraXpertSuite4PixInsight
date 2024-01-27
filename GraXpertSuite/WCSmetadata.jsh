@@ -35,6 +35,7 @@
 #define WCS_MAX_STARS_IN_SOLUTION 50000
 #define WCS_MAX_SPLINE_POINTS     2100
 
+#include "Projections.js"
 #include <pjsr/PropertyType.jsh>
 #include <pjsr/PropertyAttribute.jsh>
 #include <pjsr/RBFType.jsh>

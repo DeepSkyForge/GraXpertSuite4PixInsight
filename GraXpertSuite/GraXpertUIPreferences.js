@@ -2,7 +2,7 @@
 // GraXpert Suite for PixInsight (JavaScript Runtime)
 // ----------------------------------------------------------------------------
 //
-// GraXpertUIProcess.js part of GraXpert Suite for PixInsight
+// GraXpertUIPreferences.js part of GraXpert Suite for PixInsight
 // Copyright (c) 2024 Joël Vallier (joel.vallier@gmail.com)
 //
 // Redistribution and use in both source and binary forms, with or without
@@ -43,27 +43,15 @@
 // POSSIBILITY OF SUCH DAMAGE.
 // ----------------------------------------------------------------------------
 
-#feature-id    GraXpertUIProcess : GraXpert Suite > UI Process
+#feature-id    GraXpertUIPreferences : GraXpert Suite > UI Preferences
 
-#feature-info  GraXpert UI process.<br/>
+#feature-info  GraXpert UI preferences.<br/>
 
-#define TITLE "GraXpert UI Process"
+#define TITLE "GraXpert UI Preferences"
 
 #include "GraXpert4PixInsight.js"
 
 function main() {
-	// script should not run in global mode
-	if (Parameters.isGlobalTarget) {
-		let mb = new MessageBox(
-				"GraXpert can not run in global context.",
-				TITLE,
-				StdIcon_Error,
-				StdButton_Ok
-		);
-		mb.execute()
-		return
-	}
-	
 	// get target view
 	if (Parameters.isViewTarget) {
 		var targetView = Parameters.targetView
@@ -71,45 +59,14 @@ function main() {
 		var targetView = ImageWindow.activeWindow.currentView;
 	}
 	
-	// check if view available
-	if ( !targetView || !targetView.id ) {
-		// pop-up alert
-		let mb = new MessageBox(
-				"<p><center>No view selected to process GraXpert UI.</center></p>",
-				TITLE,
-				StdIcon_NoIcon,
-				StdButton_Ok
-		);
-		mb.execute()
-		return
-	}
-
 	// initialize parameters
 	if (!GraXpert4PixParams.init()) {
 		return
 	}
 	
-	// create engine
+	// perform the script on the target view
 	let engine = new GraXpert4PixEngine()
-	
-	// display preferences
-	if (engine.preferences() > 0) {
-		// pop-up alert
-		let mb = new MessageBox(
-			"<p><center>Current UI preferences does not allow image processing.<br>(Check console for details)</center></p>",
-			TITLE,
-			StdIcon_NoIcon,
-			StdButton_Ok
-		);
-		mb.execute();
-		return;
-	};
-	
-	// save preferences
-	GraXpert4PixParams.savePreferences();
-	
-	// reprocess target view
-	engine.execute(targetView, true);
+	engine.preferences(targetView)
 }
 
 main();

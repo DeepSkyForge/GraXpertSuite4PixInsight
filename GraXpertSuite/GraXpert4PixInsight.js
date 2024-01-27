@@ -91,6 +91,12 @@
 // - Add GraXpert UI launching, export, import, reprocess and view GraXpert preferences.
 // v1.2.0 19/01/2024
 // - Execute global context open dialog box (can be used to open process icon in dialog box).
+// v1.2.1 26/01/2024
+// - Major: Astrometric solution was not properly restored.
+// - Detect crop during UI image import (astrometric solution lost).
+// - Detect difference of image width/height in check preferences.
+// - Minor change in reset smoothing tooltip.
+// - Simplify file structure and update builder.
 //
 // For any support or suggestion related to this script please refer to
 // GitHub https://github.com/DeepSkyForge/GraXpertSuite4PixInsight
@@ -110,7 +116,7 @@
 #include <pjsr/UndoFlag.jsh>
 
 // below line will be replaced during release build from GitHub
-#define VERSION "v1.2.0"
+#define VERSION "v1.2.1"
 
 // set GraXpert folder used to store path and preferences
 #ifeq __PI_PLATFORM__ MACOSX
@@ -751,7 +757,7 @@ function GraXpert4PixEngine() {
 			if ( GraXpert4PixParams.background ) Console.writeln("Background: " + bkgFile);
 			Console.writeln("Debug: " + (GraXpert4PixParams.debug ? "On" : "Off"));
 			if ( ui_mode ) {
-				Console.writeln("Interpolation: From last GraXpert UI execution");
+				Console.writeln("Interpolation: Refer GraXpert UI Preferences");
 			} else {
 				if (GraXpert4PixParams.ai_model == "") {
 					let mb = new MessageBox(
@@ -985,13 +991,26 @@ function GraXpert4PixEngine() {
 				// clone processed into new ImageWindow
 				processed = cloneView(processed, "GraXpert");
 				
-				// restore original fit header
-				// refer https://github.com/Steffenhir/GraXpert/issues/70
-				processed.keywords = targetView.window.keywords;
-				
-				// restore original metadata
-				// refer https://github.com/Steffenhir/GraXpert/issues/85
-				this.copyCoordinates(targetView.window, processed);
+				// check geometrie
+				if (targetView.image.width !=processed.mainView.image.width || targetView.image.height != processed.mainView.image.height) {
+					// pop-up error and ask for new path
+					let mb = new MessageBox(
+							"<p><center>Astrometric solution deleted as a result <br>of the geometric transformation.</center></p>",
+							TITLE,
+							StdIcon_NoIcon,
+							StdButton_Ok
+					);
+					mb.execute();
+					Console.warningln("Astrometric solution deleted as a result of the geometric transformation.")
+				} else {
+					// restore original fit header
+					// refer https://github.com/Steffenhir/GraXpert/issues/70
+					processed.keywords = targetView.window.keywords;
+					
+					// restore original metadata
+					// refer https://github.com/Steffenhir/GraXpert/issues/85
+					this.copyCoordinates(targetView.window, processed);
+				}
 			
 				// show new image
 				if ( isAutoStretched(targetView) ) {
@@ -1065,7 +1084,7 @@ function GraXpert4PixEngine() {
 		return preferences;
 	};
 	
-	this.preferences = function(silent=false) {
+	this.preferences = function(targetView, silent=false) {
 		let labels = {
 			// stretch option
 			"stretch_option": "[ ] Stretch Options",
@@ -1096,8 +1115,8 @@ function GraXpert4PixEngine() {
 			// misc.
 			// "graxpert_version": "[x] GraXpert version", // version not properly updated / problem to be reported to GraXpert team / Information hidden for the moment
 			"working_dir": "[ ] Working directory",
-			"width": "[ ] Width",
-			"height": "[ ] Height",
+			"width": "[x] Width",
+			"height": "[x] Height",
 		};
 		let gridRequirements = {
 			"RBF": 1,
@@ -1123,11 +1142,19 @@ function GraXpert4PixEngine() {
 						continue;
 					};
 					// check errors
-					if (param == "background_points" && 
+					if (param == "width" && targetView.image.width > 0 && preferences["interpol_type_option"] != "AI" && preferences["width"] != targetView.image.width) {
+						if (!silent) Console.criticalln(labels[param] + ": " + preferences[param] + " ("+
+							targetView.image.width +" from PixInsight)");
+						errors++;
+					} else if (param == "height" && targetView.image.height > 0 && preferences["interpol_type_option"] != "AI" && preferences["height"] != targetView.image.height) {
+						if (!silent) Console.criticalln(labels[param] + ": " + preferences[param] + " ("+
+							targetView.image.height +" from PixInsight)");
+						errors++;
+					} else if (param == "background_points" && 
 						gridRequirements.hasOwnProperty(preferences["interpol_type_option"]) && 
 						preferences[param].length < gridRequirements[preferences["interpol_type_option"]]) {
 						if (!silent) Console.criticalln(labels[param] + ": " + preferences[param].length + " points ("+
-						gridRequirements[preferences["interpol_type_option"]]+" points required for "+preferences["interpol_type_option"]+" interpolation)");
+							gridRequirements[preferences["interpol_type_option"]]+" points required for "+preferences["interpol_type_option"]+" interpolation)");
 						errors++;
 					// continue in silent mode
 					} else if (silent) {
@@ -1141,11 +1168,15 @@ function GraXpert4PixEngine() {
 						Console.warningln(labels[param] + ": " + preferences[param] + " (" + GraXpert4PixParams.smoothing + " from PixInsight)");
 					} else if (param == "corr_type" && preferences[param] != GraXpert4PixParams.correction) {
 						Console.warningln(labels[param] + ": " + preferences[param] + " (" + GraXpert4PixParams.correction + " from PixInsight)");
+					} else if (param == "width" && targetView.image.width > 0 && preferences[param] != targetView.image.width) {
+						Console.warningln(labels[param] + ": " + preferences[param] + " (" + targetView.image.width + " from PixInsight)");
+					} else if (param == "height" && targetView.image.height > 0 && preferences[param] != targetView.image.height) {
+						Console.warningln(labels[param] + ": " + preferences[param] + " (" + targetView.image.height + " from PixInsight)");
 					} else {
 						Console.writeln(labels[param] + ": " + preferences[param]);
 					};
 				} else {
-					if (!silent) Console.criticalln(param + ": " + preferences[param] + " (not found)");
+					if (!silent) Console.criticalln(param + ": " + preferences[param] + " (new setting)");
 				};
 			};
 		};
@@ -1199,7 +1230,7 @@ function GraXpert4PixDialog(targetView, engine) {
 		// update GraXpert preference button
 		if (engine.getGraXpertPreferences() == undefined) {
 			this.preferencesButton.icon = this.scaledResource( ":/icons/list-warn.png" );
-		} else if (engine.preferences(true) > 0) {
+		} else if (engine.preferences(targetView, true) > 0) {
 			this.preferencesButton.icon = this.scaledResource( ":/icons/list-error.png" );
 		} else {
 			this.preferencesButton.icon = this.scaledResource( ":/icons/list.png" );
@@ -1261,7 +1292,7 @@ function GraXpert4PixDialog(targetView, engine) {
 	this.resetSmooth = new ToolButton( this );
 	this.resetSmooth.icon = this.scaledResource( ":/icons/clear-inverted.png" );
 	this.resetSmooth.setScaledFixedSize( 24, 24 );
-	this.resetSmooth.toolTip = "<p>Reset the Lab color blend to its default.</p>";
+	this.resetSmooth.toolTip = "<p>Reset smoothing to its default.</p>";
 	this.resetSmooth.onClick = () => {
 		GraXpert4PixParams.smoothing = defaults().smoothing;
 		this.smoothControl.setValue( GraXpert4PixParams.smoothing );
@@ -1404,7 +1435,7 @@ function GraXpert4PixDialog(targetView, engine) {
 		// update button just in case preference status changes
 		this.updateButtons();
 		// log preferences
-		engine.preferences();
+		engine.preferences(targetView);
 	};
 	
 	// reprocess image with last Preferences
@@ -1420,7 +1451,7 @@ function GraXpert4PixDialog(targetView, engine) {
 	this.reprocessButton.toolTip = "<p>Reprocess target view using last GraXpert UI interpolation method, grid and other parameters. Take only smoothing and correction from PixInsight settings.</p>";
 	this.reprocessButton.onClick = () => {
 		// display preferences
-		if (engine.preferences() > 0) {
+		if (engine.preferences(targetView) > 0) {
 			// pop-up alert
 			let mb = new MessageBox(
 				"<p><center>Current UI preferences does not allow image processing.<br>(Check console for details)</center></p>",

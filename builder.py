@@ -29,39 +29,42 @@ def extract_files_from_remove_section(xml_file):
     except Exception as e:
         raise ValueError(f"XML Parsing {xml_file}: {e}")
 
-def save_list_to_zip(files_list, zip_file, output_directory):
+def save_list_to_zip(files_list, script_folder, output_directory):
     try:
+        # check path
+        local_files = []
+        for file in files_list:
+            if file == '':
+                continue
+            elif not file.startswith(f"src/scripts/{script_folder}/"):
+                raise Exception(f"Invalid path {file}")
+            else:
+                file = file.replace("src/scripts/", '')
+            if not os.path.exists(file):
+                raise FileNotFoundError(f"File '{file}' not found.")
+            local_files.append(file)
+        
+        # define eip file name
+        zip_file = f"{script_folder}.zip"
+        
         # build zip for manual install
-        print("\nBuild zip for manual install")
+        print(f"\nBuild {zip_file} for manual install")
         zip_file_path = os.path.join(output_directory, zip_file)
         with zipfile.ZipFile(zip_file_path, 'w', zipfile.ZIP_DEFLATED) as zipf:
-            for file in files_list:
-                if file == '' or file.endswith('.svg'):
-                    continue
-                # Check if the file exists
-                if os.path.exists(file):
-                    # Get the relative path for the file in the zip archive
-                    zipf.write(file, os.path.basename(file))
-                    print(f"+ {os.path.basename(file)}")
-                else:
-                    raise FileNotFoundError(f"File '{file}' not found.")
+            for file in local_files:
+                zipf.write(file, os.path.basename(file))
+                print(f"+ {file}")
 
-        print("\nBuild zip for automatic install")
+        # build zip for standard install
         date_prefix = datetime.now().strftime("%Y%m%d")
-        zip_file_with_date = f"{date_prefix}_{zip_file}"
-        zip_file_path = os.path.join(output_directory, zip_file_with_date)
+        zip_file = f"{date_prefix}_{zip_file}"
+        print(f"\nBuild {zip_file} for automatic install")
+        zip_file_path = os.path.join(output_directory, zip_file)
         with zipfile.ZipFile(zip_file_path, 'w', zipfile.ZIP_DEFLATED) as zipf:
-            for file in files_list:
-                if not file.startswith("src/scripts/GraXpertSuite/"):
-                    raise Exception(f"Invalid path in file {file} found in updates file")
-                if file == '':
-                    continue
-                # Check if the file exists
-                if os.path.exists(file):
-                    zipf.write(file, file)
-                    print(f"+ {file}")
-                else:
-                    raise FileNotFoundError(f"File '{file}' not found.")
+            for file in local_files:
+                destination = os.path.join("src/scripts/", file)
+                zipf.write(file, destination)
+                print(f"+ {destination}")
 
         return zip_file_path
     except Exception as e:
@@ -69,12 +72,11 @@ def save_list_to_zip(files_list, zip_file, output_directory):
 
 
 def replace_and_save(source_path, dest_directory, zip_file_path):
-    print("\nBuild update file")
     # Check if the source file exists
     if not os.path.isfile(source_path):
         print(f"The source file '{source_path}' does not exist.")
         return
-    print(f"+ Update: {source_path}")
+    print(f"\nBuild update file from {os.path.basename(source_path)}")
     
     # Check if the source file exists
     if not os.path.isfile(zip_file_path):
@@ -117,20 +119,21 @@ def replace_and_save(source_path, dest_directory, zip_file_path):
 
 
 if __name__ == "__main__":
-    try:
-        output_directory = os.path.join("repository", "update-beta")
-        if os.path.exists(output_directory):
-            shutil.rmtree(output_directory)
-        for updates_xml_file in ["updates.xri", "updates-suite.xri"]:
-            files_list = extract_files_from_remove_section(updates_xml_file)
-            destination = os.path.join(output_directory, updates_xml_file.replace("updates", "graxpert").replace(".xri",""))
-            os.makedirs(destination, exist_ok=True)
-            if files_list:
-                zip_file_path = save_list_to_zip(files_list, "GraXpertSuite.zip", destination)
-                replace_and_save(updates_xml_file, destination, zip_file_path)
-            shutil.copy(os.path.join(output_directory, "../index.html"), destination)
-        shutil.copy(os.path.join(output_directory, "../index.html"), output_directory)
-    except ValueError as ve:
-        print(ve)
-    print()
+    while (1):
+        try:
+            output_directory = os.path.join("repository", "update-beta")
+            if os.path.exists(output_directory):
+                shutil.rmtree(output_directory)
+            for updates_xml_file in ["updates.xri", "updates-suite.xri"]:
+                files_list = extract_files_from_remove_section(updates_xml_file)
+                destination = os.path.join(output_directory, updates_xml_file.replace("updates", "graxpert").replace(".xri",""))
+                os.makedirs(destination, exist_ok=True)
+                if files_list:
+                    zip_file_path = save_list_to_zip(files_list, "GraXpertSuite", destination)
+                    replace_and_save(updates_xml_file, destination, zip_file_path)
+                shutil.copy(os.path.join(output_directory, "../index.html"), destination)
+            shutil.copy(os.path.join(output_directory, "../index.html"), output_directory)
+        except ValueError as ve:
+            print(ve)
+        input("\nRUN PIXINSIGHT CODE SIGNING AGAIN TO SIGN updates.xri FILES")
 
