@@ -1,0 +1,9 @@
+\documentclass PIScriptDoc
+
+\script GXS-UI-Export
+
+\brief {
+	Simple shortcut to export PixInsight photo into GraXpert user interface.
+}
+
+\include include-shortcuts.pidoc

@@ -2,7 +2,7 @@
 // GraXpert Suite for PixInsight (JavaScript Runtime)
 // ----------------------------------------------------------------------------
 //
-// GraXpert4PixInsight.js part of GraXpert Suite for PixInsight
+// Helper.js part of GraXpert Suite for PixInsight
 // Copyright (c) 2024 Joël Vallier (joel.vallier@gmail.com)
 //
 // Redistribution and use in both source and binary forms, with or without
@@ -43,68 +43,8 @@
 // POSSIBILITY OF SUCH DAMAGE.
 // ----------------------------------------------------------------------------
 
-// ======== #release information ==============================================
-// 
-// v0.0.1 12/11/23 
-// - First release based on GraXpert version 2.0.2.
-// v0.0.2 19/11/23 
-// - Release based on enhanced Command Line Interface of GraXpert version 2.0.2.
-// v0.0.3 23/11/23 
-// - Extract background model by default.
-// - Drag & Drop of new instance icon apply process on target image.
-// - Fix error undefined ImageMetadata when create new image selected.
-// - Fix undeclared variables (engine and ai_model) on first launching.
-// v0.0.4 26/11/2023
-// - Save custom default parameters and reset to Default
-// - Automatic configurable path to GraXpert App 
-// v0.0.5 03/12/2023
-// - Compatibility with GraXpert and GradXtractAI.
-// - Save preferences.
-// v0.0.6 12/12/2023
-// - Fix compatibility with MacOS (Thanks to Rob Pfile)
-// - Simplify the reset path to GraXpert.
-// - Log running time in Pix console.
-// - Tooltip improved.
-// v0.0.7 14/22/2023
-// - Display GraXpert errors in console.
-// - Avoid save path to temporary file.
-// v0.0.8 18/12/2023
-// - Integration of GraXpert pre-release v2.0.3.
-// v1.0.0-beta.1 19/12/2023
-// - Pre-release Beta 1
-// v1.0.0-beta.2 20/12/2023
-// - Add automatic version check.
-// v1.0.0-beta.3 21/12/2023
-// - Misc changes.
-// v1.0.0 01/01/2024
-// - Rework default parameters.
-// - Tested with GraXpert v2.1.1
-// - Fix smoothing 0.
-// - User can launch UI from script.
-// v1.1.0 04/01/2024
-// - Display GraXpert version after execution.
-// - Do not consider missing s3_secrets has real error but as warning (do not trigger the display of GraXpert logs).
-// - Filter Tensor warning messages to avoid trigger of GraXpert logs in console window.
-// - Keep target view file path unchanged when running GraXpert AI.
-// - Fix smoothin parameter in case of drag & drop new instance on target view.
-// - Add automatic strech.
-// - Add GraXpert UI launching, export, import, reprocess and view GraXpert preferences.
-// v1.2.0 19/01/2024
-// - Execute global context open dialog box (can be used to open process icon in dialog box).
-// v1.2.1 26/01/2024
-// - Major: Astrometric solution was not properly restored.
-// - Detect crop during UI image import (astrometric solution lost).
-// - Detect difference of image width/height in check preferences.
-// - Minor change in reset smoothing tooltip.
-// - Simplify file structure and update builder.
-//
-// For any support or suggestion related to this script please refer to
-// GitHub https://github.com/DeepSkyForge/GraXpertSuite4PixInsight
-//
-// ============================================================================
-
-#ifndef __GRAXPERT4PIXINSIGHT_jsh
-#define __GRAXPERT4PIXINSIGHT_jsh
+#ifndef __GRAXPERT_HELPER_jsh
+#define __GRAXPERT_HELPER_jsh
 
 #include <pjsr/ColorSpace.jsh>
 #include <pjsr/DataType.jsh>
@@ -116,7 +56,7 @@
 #include <pjsr/UndoFlag.jsh>
 
 // below line will be replaced during release build from GitHub
-#define VERSION "v1.2.1"
+#define VERSION "v1.3.0"
 
 // set GraXpert folder used to store path and preferences
 #ifeq __PI_PLATFORM__ MACOSX
@@ -135,7 +75,7 @@
 #define GRAXPERT_AI_MODELS File.homeDirectory + "/.local/share/GraXpert/ai-models/*"
 #endif
 
-#define GRAXPERT4PIX_WIKI "https://github.com/DeepSkyForge/GraXpertSuite4PixInsight/wiki/"
+#define DEEPSKYFORGE "https://www.deepskyforge.com/"
 #define GRAXPERT_RELEASES "https://github.com/Steffenhir/GraXpert/releases/"
 #define GRAXPERT_MINIMAL_VERSION "v2.2.1"
 
@@ -199,6 +139,7 @@ let GraXpert4PixParams = {
 	init: function () {
 		// log GraXpert script version
 		Console.writeln("<br><b>Loading parameters:</b> ");
+		Console.writeln("GraXpert Suite "+VERSION);
 		let errors = 0;
 		
 		// prepare local directory (save path and preferences)
@@ -595,7 +536,7 @@ function GraXpert4PixEngine() {
 				};
 			};
 			if ( error_args ) {
-				Console.criticalln("<br>Please ensure you have GraXpert version 2.1.1 or higher");
+				Console.criticalln("<br>Please ensure you have GraXpert " + GRAXPERT_MINIMAL_VERSION + " or higher");
 			};
 			Console.write("<reset-font>");
 		};
@@ -606,7 +547,7 @@ function GraXpert4PixEngine() {
 	this.copyCoordinates = function (reference, processed) {
 		Console.writeln("<br><b>Copy coordinates:</b>");
 		// Extract metadata
-		var metadata0 = new ImageMetadata("GraXpert4PixInsight");
+		var metadata0 = new ImageMetadata("GraXpertSuite");
 		metadata0.ExtractMetadata(reference);
 		if (!metadata0.projection || !metadata0.ref_I_G) {
 			Console.writeln("The reference image has no astrometric solution");
@@ -763,8 +704,7 @@ function GraXpert4PixEngine() {
 					let mb = new MessageBox(
 						"<p><center>GraXpert AI model(s) not yet installed !</center></p>"+
 						"<p><center>The first execution will installe the default model.<br>"+
-						"This may delay processing of first image by several minutes.</center></p>"+
-						"<p><center><a href='" + GRAXPERT4PIX_WIKI + "'>Visit GitHub GraXpert script for PixInsight</a></center></p>",
+						"This may delay processing of first image by several minutes.</center></p>",
 						TITLE,
 						StdIcon_NoIcon,
 						StdButton_Ok
@@ -1189,9 +1129,9 @@ function GraXpert4PixEngine() {
 	};
 };
 
-#endif	// __GRAXPERT4PIXINSIGHT_jsh
+#endif	// __GRAXPERT_HELPER_jsh
 
-#ifdef __GRAXPERT4PIXINSIGHT_DIALOG__
+#ifdef __GRAXPERT_ALL_IN_ONE_DIALOG__
 /*
  * GraXpert dialog interface
  */
@@ -1265,7 +1205,7 @@ function GraXpert4PixDialog(targetView, engine) {
 	this.title.margin = 6;
 	this.title.wordWrapping = true;
 	this.title.useRichText = true;
-	this.title.text = "<b>" + TITLE + " version " + VERSION + "</b><br>GraXpert is an astronomical image processing program for extracting and removing gradients from the background of your astrophotos.<br><a href='" + GRAXPERT4PIX_WIKI + "'>Visit GitHub GraXpert Suite for PixInsight</a>";
+	this.title.text = "<b>" + TITLE + " version " + VERSION + "</b><br>GraXpert is an astronomical image processing program for extracting and removing gradients from the background of your astrophotos.<br><a href='" + DEEPSKYFORGE + "'>Visit DeepSkyForge website</a>";
 
 	// create a view picker
 	this.viewList = new ViewList(this);
@@ -1595,6 +1535,23 @@ function GraXpert4PixDialog(targetView, engine) {
 		this.updateButtons();
 	};
 	
+	// help
+	this.helpButton = new ToolButton( this );
+	this.helpButton.icon = this.scaledResource(":/process-interface/browse-documentation.png");
+	this.helpButton.setScaledFixedSize( 24, 24 );
+	this.helpButton.toolTip = "<p>Browse Documentation.</p>";
+	this.helpButton.onClick = () => {
+		if (!Dialog.browseScriptDocumentation(TITLE)) {
+			let mb = new MessageBox(
+				"<p>Documentation has not been installed.</p>",
+				TITLE,
+				StdIcon_Warning,
+				StdButton_Ok
+			);
+			mb.execute();
+		};
+	};
+	
 	// create a horizontal slider to layout the execution button
 	this.execButtonSizer = new HorizontalSizer;
 	this.execButtonSizer.margin = 0;
@@ -1605,6 +1562,7 @@ function GraXpert4PixDialog(targetView, engine) {
 	this.execButtonSizer.add( this.execButton );
 	this.execButtonSizer.add( this.cancelButton );
 	this.execButtonSizer.add( this.resetButton );
+	this.execButtonSizer.add( this.helpButton );
 	
 	// layout the dialog
 	this.sizer = new VerticalSizer;
@@ -1641,4 +1599,4 @@ function GraXpert4PixDialog(targetView, engine) {
 
 GraXpert4PixDialog.prototype = new Dialog;
 
-#endif	// __GRAXPERT4PIXINSIGHT_DIALOG__
+#endif	// __GRAXPERT_ALL_IN_ONE_DIALOG__

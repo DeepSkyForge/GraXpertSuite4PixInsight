@@ -1,0 +1,9 @@
+\documentclass PIScriptDoc
+
+\script GXS-UI-Process
+
+\brief {
+	Simple shortcut to process PixInsight photo in GraXpert using GraXpert preferences.
+}
+
+\include include-shortcuts.pidoc

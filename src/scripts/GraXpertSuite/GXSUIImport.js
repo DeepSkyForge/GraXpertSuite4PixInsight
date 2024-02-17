@@ -2,7 +2,7 @@
 // GraXpert Suite for PixInsight (JavaScript Runtime)
 // ----------------------------------------------------------------------------
 //
-// GraXpertUIExport.js part of GraXpert Suite for PixInsight
+// GXSUIImport.js part of GraXpert Suite for PixInsight
 // Copyright (c) 2024 Joël Vallier (joel.vallier@gmail.com)
 //
 // Redistribution and use in both source and binary forms, with or without
@@ -43,27 +43,15 @@
 // POSSIBILITY OF SUCH DAMAGE.
 // ----------------------------------------------------------------------------
 
-#feature-id    GraXpertUIExport : GraXpert Suite > UI Export
+#feature-id    GraXpertUIImport : GraXpert Suite > GXS-UI-Import
 
-#feature-info  GraXpert UI application.<br/>
+#feature-info  GraXpert image import.<br/>
 
-#define TITLE "GraXpert UI Export"
+#define TITLE "GXS-UI-Import"
 
-#include "GraXpert4PixInsight.js"
+#include "Helper.js"
 
 function main() {
-	// script should not run in global mode
-	if (Parameters.isGlobalTarget) {
-		let mb = new MessageBox(
-				"GraXpert can not run in global context.",
-				TITLE,
-				StdIcon_Error,
-				StdButton_Ok
-		);
-		mb.execute()
-		return
-	}
-	
 	// get target view
 	if (Parameters.isViewTarget) {
 		var targetView = Parameters.targetView
@@ -75,16 +63,13 @@ function main() {
 	if ( !targetView || !targetView.id ) {
 		// pop-up alert
 		let mb = new MessageBox(
-				"<p><center>No view selected for the export.</center></p>"+
-				"<p><center>Click Ok to launch GraXpert UI.</center></p>",
+				"<p><center>No view selected to restore astronomic data.</center></p>"+
+				"<p><center>Click Ok to continue.</center></p>",
 				TITLE,
 				StdIcon_NoIcon,
-				StdButton_Ok,
-				StdButton_Cancel
+				StdButton_Ok
 		);
-		if (mb.execute() == StdButton_Cancel) {
-			return
-		}
+		mb.execute()
 	}
 
 	// initialize parameters
@@ -94,7 +79,7 @@ function main() {
 	
 	// perform the script on the target view
 	let engine = new GraXpert4PixEngine()
-	engine.export(targetView)
+	engine.import(targetView)
 }
 
 main();

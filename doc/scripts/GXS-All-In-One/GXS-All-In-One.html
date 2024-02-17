@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+   <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+   <title>PixInsight Reference Documentation | GXS-All-In-One</title>
+   <meta name="keywords" content="Gradient removal, GraXpert" />
+   <meta name="author" content="Joël Vallier (this script), GraXpert application developed the GraXpert team." />
+   <meta name="description" content="Use GraXpert Suite All in One script to remove gradients from astrophotos." />
+   <meta name="robots" content="INDEX,FOLLOW" />
+   <meta name="generator" content="PixInsight Documentation Compiler script version 1.7.1" />
+   <meta name="pidoc-document-class" content="PIScriptDoc" />
+   <script type="text/javascript" src="../../pidoc/scripts/pidoc-utility.js"></script>
+   <link type="text/css" href="../../pidoc/css/pidoc-common.css" rel="stylesheet" />
+   <link type="text/css" href="../../pidoc/css/pidoc-highlight.css" rel="stylesheet" />
+   <link type="text/css" href="../../pidoc/css/pidoc-tool.css" rel="stylesheet" />
+   <link rel="icon" href="../../pidoc/icons/pidoc-icon.svg" />
+</head>
+<body>
+<script type="text/javascript">
+   pidoc_generateDynamicContents();
+</script>
+
+<h1>GXS-All-In-One</h1>
+
+<div id="authors">
+<p>By Joël Vallier (this script), GraXpert application developed the GraXpert team.</p>
+</div>
+
+<hr class="separator"/>
+
+<div id="brief">
+<p>Use GraXpert Suite All in One script to remove gradients from astrophotos. <a href="#__contents__">[more]</a></p></div>
+
+<div id="keywords">
+<p><strong>Keywords:</strong> Gradient removal, GraXpert</p>
+</div>
+
+<h3 class="pidoc_sectionTitle" id="__toc__">Contents</h3>
+<p class="pidoc_sectionToggleButton" onclick="pidoc_toggleSection( 'toc', this );">[hide]</p>
+<div id="toc">
+<ul>
+<li class="pidoc_tocItem"><a href="#__Description__">1&emsp;Description</a></li>
+<li class="pidoc_tocItem"><a href="#__Usage__">2&emsp;Usage</a>
+<ul>
+<li class="pidoc_tocSubitem"><a href="#__Usage_:_Drop_down_list_view__">2.1&emsp;Drop down list view</a></li>
+<li class="pidoc_tocSubitem"><a href="#__Usage_:_Correction__">2.2&emsp;Correction</a></li>
+<li class="pidoc_tocSubitem"><a href="#__Usage_:_Smoothing__">2.3&emsp;Smoothing</a></li>
+<li class="pidoc_tocSubitem"><a href="#__Usage_:_Create_new_image__">2.4&emsp;Create new image</a></li>
+<li class="pidoc_tocSubitem"><a href="#__Usage_:_Create_background_model__">2.5&emsp;Create background model</a></li>
+<li class="pidoc_tocSubitem"><a href="#__Usage_:_GraXpert_UI__Export__">2.6&emsp;GraXpert UI / Export</a></li>
+<li class="pidoc_tocSubitem"><a href="#__Usage_:_GraXpert_UI__Launch__">2.7&emsp;GraXpert UI / Launch</a></li>
+<li class="pidoc_tocSubitem"><a href="#__Usage_:_GraXpert_UI__Import__">2.8&emsp;GraXpert UI / Import</a></li>
+<li class="pidoc_tocSubitem"><a href="#__Usage_:_GraXpert_UI__Preferences__">2.9&emsp;GraXpert UI / Preferences</a></li>
+<li class="pidoc_tocSubitem"><a href="#__Usage_:_GraXpert_UI__Reprocess__">2.10&emsp;GraXpert UI / Reprocess</a></li>
+<li class="pidoc_tocSubitem"><a href="#__Usage_:_Debug_GraXpert__">2.11&emsp;Debug GraXpert</a></li>
+<li class="pidoc_tocSubitem"><a href="#__Usage_:_Set_path__">2.12&emsp;Set path</a></li>
+<li class="pidoc_tocSubitem"><a href="#__Usage_:_AI_version__">2.13&emsp;AI version</a></li>
+<li class="pidoc_tocSubitem"><a href="#__Usage_:_New_instance__">2.14&emsp;New instance</a></li>
+<li class="pidoc_tocSubitem"><a href="#__Usage_:_Execute__">2.15&emsp;Execute</a></li>
+<li class="pidoc_tocSubitem"><a href="#__Usage_:_PixInsights_console_PauseAbort__">2.16&emsp;PixInsight's console Pause/Abort</a></li>
+<li class="pidoc_tocSubitem"><a href="#__Usage_:_Cancel__">2.17&emsp;Cancel</a></li>
+<li class="pidoc_tocSubitem"><a href="#__Usage_:_Reset__">2.18&emsp;Reset</a></li>
+</ul>
+</li>
+<li class="pidoc_tocItem"><a href="#__References__">3&emsp;References</a></li>
+</ul>
+</div>
+
+<div id="__contents__">
+
+<div class="pidoc_section" id="__Description__">
+   <h3 class="pidoc_sectionTitle">1&emsp;Description</h3>
+   <p class="pidoc_sectionToggleButton" onclick="pidoc_toggleSection( 'Description', this );">[hide]</p>
+   <div id="Description">
+<p>GraXpert is an open-source software designed to remove gradients from astrophotos caused by external interferences such as light pollution. It enhances the aesthetics of deep-sky photos, simplifies post-processing, and enables the removal of color dominances. It operates independently and exclusively dedicated to this task.</p>
+<p>GraXpert Suite for PixInsignt streamline gradient removal through GraXpert. You can use AI mode, which is straightforward, or UI mode, which will open your photo in GraXpert UI and import the result back to PixInsight.</p>
+
+<div style="text-align:center;">
+
+<div class="pidoc_figure">
+<a id="__figure_1__"></a>
+<p class="pidoc_figure_title">Figure 1</p>
+<img src="images/dialogbox.png" alt=""/>
+<p>GraXpert All In One dialog box</p>
+</div>
+</div>
+<p>GraXpert Suite for PixInsight is delevered into 2 packages</p>
+
+<dl class="pidoc_list">
+<dt>
+<p>GraXpert All in One</p>
+</dt>
+<dd>
+<p>It provides all GraXpert features and so is a good start point. <br class="pidoc_clearfix"/>
+ Script under menu SCRIPT &gt; Utilities.</p>
+</dd>
+<dt>
+<p>GraXpert Suite (GXS)</p>
+</dt>
+<dd>
+<p>It provides several shortcuts to GraXpert features including GraXpert All in One. <br class="pidoc_clearfix"/>
+ Scripts under dedicated submenu SCRIPT &gt; GraXpert Suite.</p>
+</dd>
+</dl>
+
+<p>Both packages can be installed provided that you keep them synchronized in terms of version. This script version requires GraXpert version 2.2.1 or higher and will not work with older versions of GraXpert.</p>
+   </div>
+</div>
+
+<div class="pidoc_section" id="__Usage__">
+   <h3 class="pidoc_sectionTitle">2&emsp;Usage</h3>
+   <p class="pidoc_sectionToggleButton" onclick="pidoc_toggleSection( 'Usage', this );">[hide]</p>
+   <div id="Usage">
+<div class="pidoc_subsection" id="__Usage_:_Drop_down_list_view__">
+   <h4 class="pidoc_subsectionTitle">2.1&emsp;Drop down list view</h4>
+<p>Select the image to be processed.<br class="pidoc_clearfix"/>
+ You can also use the new instance drap and drop button (triangle on bottom left) to apply process on photo.</p>
+</div>
+
+<div class="pidoc_subsection" id="__Usage_:_Correction__">
+   <h4 class="pidoc_subsectionTitle">2.2&emsp;Correction</h4>
+<p>Select <strong>Subtraction</strong> for most cases. <br class="pidoc_clearfix"/>
+ Only for very strong gradients (i.e. vignetting or things like this) you should select <strong>Division</strong> instead.</p>
+</div>
+
+<div class="pidoc_subsection" id="__Usage_:_Smoothing__">
+   <h4 class="pidoc_subsectionTitle">2.3&emsp;Smoothing</h4>
+<p>Under most circumstances the default smoothing factor of 0.0 should be your best choice. <br class="pidoc_clearfix"/>
+ The smoothing factor does not influence the result produced by the AI model. The resulting background model can be further smoothed using gaussian blur. Please consider providing your image as training data, if smoothing is required.</p>
+</div>
+
+<div class="pidoc_subsection" id="__Usage_:_Create_new_image__">
+   <h4 class="pidoc_subsectionTitle">2.4&emsp;Create new image</h4>
+<p>If checked, a new image will be created. Otherwise, the selected image will be replaced by the processed image. If Screen Transfer has been activated on the original photo, it will also be applied to the processed view.</p>
+</div>
+
+<div class="pidoc_subsection" id="__Usage_:_Create_background_model__">
+   <h4 class="pidoc_subsectionTitle">2.5&emsp;Create background model</h4>
+<p>If checked, the background model calculated by GraXpert will be shown. If Screen Transfer has been activated on the original photo, it will also be applied to the background model.</p>
+</div>
+
+<div class="pidoc_subsection" id="__Usage_:_GraXpert_UI__Export__">
+   <h4 class="pidoc_subsectionTitle">2.6&emsp;GraXpert UI / Export</h4>
+<p>Select a photo en click on GraXpert UI / Export button to automatically open photo in GraXpert graphical interface. This action is also available from menu SCRIPT &gt; GraXpert Suite &gt; UI Export. When image is processed, all application parameters are saved for next processing.</p>
+</div>
+
+<div class="pidoc_subsection" id="__Usage_:_GraXpert_UI__Launch__">
+   <h4 class="pidoc_subsectionTitle">2.7&emsp;GraXpert UI / Launch</h4>
+<p>Click on GraXpert UI / Launch button to start GraXpert graphical interface. This action is also available from menu SCRIPT &gt; GraXpert Suite &gt; UI Launcher.</p>
+</div>
+
+<div class="pidoc_subsection" id="__Usage_:_GraXpert_UI__Import__">
+   <h4 class="pidoc_subsectionTitle">2.8&emsp;GraXpert UI / Import</h4>
+<p>After image processed in GraXpert graphical interface and saved with default name, click on GraXpert UI / Import will automatically import processed image in PixInsight. Same is possible with background model saved with default name.</p>
+</div>
+
+<div class="pidoc_subsection" id="__Usage_:_GraXpert_UI__Preferences__">
+   <h4 class="pidoc_subsectionTitle">2.9&emsp;GraXpert UI / Preferences</h4>
+<p>Display in PixInsight's console the GraXpert settings and check for an automatic photo reprocessing. A red exclamation point on the preferences icon will appear if preferences are not compatible with a new automatic processing. Line in purple indicates that a PixInsight parameters will overwrite current GraXpert settings (basically Correction and Smoothing). Line in red indicates that parameter is not compatible with an automatic reprocessing (not enough grid point for instance).</p>
+</div>
+
+<div class="pidoc_subsection" id="__Usage_:_GraXpert_UI__Reprocess__">
+   <h4 class="pidoc_subsectionTitle">2.10&emsp;GraXpert UI / Reprocess</h4>
+<p>Click on reprocess to automatically reprocess selected image with current GraXpert preferences and Correction/Smoothing from GraXpert Suite.</p>
+</div>
+
+<div class="pidoc_subsection" id="__Usage_:_Debug_GraXpert__">
+   <h4 class="pidoc_subsectionTitle">2.11&emsp;Debug GraXpert</h4>
+<p>If checked, script will display GraXpert logs into PixInsight's console with addition information on execution context. <br class="pidoc_clearfix"/>
+ In case of any issues, all GraXpert logs will be displayed in the console whatever this setting. <br class="pidoc_clearfix"/>
+ Please provide a copy of the console if support is required.</p>
+</div>
+
+<div class="pidoc_subsection" id="__Usage_:_Set_path__">
+   <h4 class="pidoc_subsectionTitle">2.12&emsp;Set path</h4>
+<p>Set or change the path to the GraXpert application. <br class="pidoc_clearfix"/>
+ A red exclamation point on the icon appears when the path to GraXpert is not filled in or is no longer valid. <br class="pidoc_clearfix"/>
+ The first you will execute GraXpert, script will ask you the path to the application if not yet defined or no longer valid.</p>
+</div>
+
+<div class="pidoc_subsection" id="__Usage_:_AI_version__">
+   <h4 class="pidoc_subsectionTitle">2.13&emsp;AI version</h4>
+<p>Display AI version that will be used for AI backgroung processing (last AI model will be used by default). <br class="pidoc_clearfix"/>
+ This field won't be displayed if there is no AI model downloaded yet. <br class="pidoc_clearfix"/>
+ The first execution may take some time if you have never loaded the AI model. <br class="pidoc_clearfix"/>
+ You can download several AI versions using GraXpert UI. <br class="pidoc_clearfix"/>
+ You can define which AI model to be used when several versions are available.</p>
+</div>
+
+<div class="pidoc_subsection" id="__Usage_:_New_instance__">
+   <h4 class="pidoc_subsectionTitle">2.14&emsp;New instance</h4>
+<p>Dropping the button with blue triangle onto an image will automaticaly launch image processing using AI mode. <br class="pidoc_clearfix"/>
+ You can also drop an instance of the script with the current settings to your workspace for later use (process icon). <br/>
+ You can edit parameters by double click on process icon but you will need to clear the MD5 checksum field before processing image. It is possible to open the GraXpert Suite dialogue box from the process icon by right-clicking and selecting &quot;Execution in the global context“. In this case, the parameter settings will be saved in the GraXpert Suite preferences, not in the process icon.</p>
+</div>
+
+<div class="pidoc_subsection" id="__Usage_:_Execute__">
+   <h4 class="pidoc_subsectionTitle">2.15&emsp;Execute</h4>
+<p>Use the button Execute to process the image using AI mode and current settings. <br class="pidoc_clearfix"/>
+ Your settings are stored and will be restored on the next script run. Make sure to have an image open else button will be disabled.</p>
+</div>
+
+<div class="pidoc_subsection" id="__Usage_:_PixInsights_console_PauseAbort__">
+   <h4 class="pidoc_subsectionTitle">2.16&emsp;PixInsight's console Pause/Abort</h4>
+<p>You can stop GraXpert execution at any time by clicking on PixInsight's console Pause/Abort and confirm Abort action. GraXpert UI Export and Launcher run GraXpert graphical interface in detached mode. You can close the application itself.</p>
+</div>
+
+<div class="pidoc_subsection" id="__Usage_:_Cancel__">
+   <h4 class="pidoc_subsectionTitle">2.17&emsp;Cancel</h4>
+<p>Closes the script.</p>
+</div>
+
+<div class="pidoc_subsection" id="__Usage_:_Reset__">
+   <h4 class="pidoc_subsectionTitle">2.18&emsp;Reset</h4>
+<p>Resets all your settings to their default values.</p>
+</div>
+
+   </div>
+</div>
+
+<div class="pidoc_section" id="__References__">
+   <h3 class="pidoc_sectionTitle">3&emsp;References</h3>
+   <p class="pidoc_sectionToggleButton" onclick="pidoc_toggleSection( 'References', this );">[hide]</p>
+   <div id="References">
+
+<dl class="pidoc_list">
+<dt>
+<p>GraXpert</p>
+</dt>
+<dd>
+<p><a href="https://www.graxpert.com/" title="https://www.graxpert.com/">https://www.graxpert.com/</a></p>
+</dd>
+<dt>
+<p>GraXpert Suite</p>
+</dt>
+<dd>
+<p><a href="https://www.deepskyforge.com/" title="https://www.deepskyforge.com/">https://www.deepsckyforge.com/</a></p>
+</dd>
+<dt>
+<p>Documentation</p>
+</dt>
+<dd>
+<p><a href="https://www.deepskyforge.com/documents/GraXpertSuite4PixInsight-EN.pdf" title="https://www.deepskyforge.com/documents/GraXpertSuite4PixInsight-EN.pdf">https://www.deepskyforge.com/documents/GraXpertSuite4PixInsight-EN.pdf</a></p>
+</dd>
+<dt>
+<p>Support</p>
+</dt>
+<dd>
+<p><a href="https://github.com/DeepSkyForge/GraXpertSuite4PixInsight/issues/" title="https://github.com/DeepSkyForge/GraXpertSuite4PixInsight/issues/">https://github.com/DeepSkyForge/GraXpertSuite4PixInsight/issues/</a></p>
+</dd>
+</dl>
+
+   </div>
+</div>
+
+<hr class="separator"/>
+
+<div id="copyright">
+   <p>Copyright &copy; 2023-2024 Joël Vallier</p>
+</div>
+
+<div id="footer">
+   <p>Generated by the PixInsight Documentation Compiler script version 1.7.1 on 2024-02-12 22:04:52 UTC</p>
+</div>
+<br/>
+<br/>
+
+</div> <!-- contents -->
+
+</body>
+</html>

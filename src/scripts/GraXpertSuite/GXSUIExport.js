@@ -2,7 +2,7 @@
 // GraXpert Suite for PixInsight (JavaScript Runtime)
 // ----------------------------------------------------------------------------
 //
-// GraXpertUIPreferences.js part of GraXpert Suite for PixInsight
+// GXSUIExport.js part of GraXpert Suite for PixInsight
 // Copyright (c) 2024 Joël Vallier (joel.vallier@gmail.com)
 //
 // Redistribution and use in both source and binary forms, with or without
@@ -43,15 +43,27 @@
 // POSSIBILITY OF SUCH DAMAGE.
 // ----------------------------------------------------------------------------
 
-#feature-id    GraXpertUIPreferences : GraXpert Suite > UI Preferences
+#feature-id    GraXpertUIExport : GraXpert Suite > GXS-UI-Export
 
-#feature-info  GraXpert UI preferences.<br/>
+#feature-info  GraXpert UI application.<br/>
 
-#define TITLE "GraXpert UI Preferences"
+#define TITLE "GXS-UI-Export"
 
-#include "GraXpert4PixInsight.js"
+#include "Helper.js"
 
 function main() {
+	// script should not run in global mode
+	if (Parameters.isGlobalTarget) {
+		let mb = new MessageBox(
+				"GraXpert can not run in global context.",
+				TITLE,
+				StdIcon_Error,
+				StdButton_Ok
+		);
+		mb.execute()
+		return
+	}
+	
 	// get target view
 	if (Parameters.isViewTarget) {
 		var targetView = Parameters.targetView
@@ -59,6 +71,22 @@ function main() {
 		var targetView = ImageWindow.activeWindow.currentView;
 	}
 	
+	// check if view available
+	if ( !targetView || !targetView.id ) {
+		// pop-up alert
+		let mb = new MessageBox(
+				"<p><center>No view selected for the export.</center></p>"+
+				"<p><center>Click Ok to launch GraXpert UI.</center></p>",
+				TITLE,
+				StdIcon_NoIcon,
+				StdButton_Ok,
+				StdButton_Cancel
+		);
+		if (mb.execute() == StdButton_Cancel) {
+			return
+		}
+	}
+
 	// initialize parameters
 	if (!GraXpert4PixParams.init()) {
 		return
@@ -66,7 +94,7 @@ function main() {
 	
 	// perform the script on the target view
 	let engine = new GraXpert4PixEngine()
-	engine.preferences(targetView)
+	engine.export(targetView)
 }
 
 main();

@@ -1,0 +1,117 @@
+===============================================================================
+GraXpert Suite for PixInsight Script Changelog
+
+For any support or suggestion related to this script please refer to GitHub 
+https://github.com/DeepSkyForge/GraXpertSuite4PixInsight
+
+===============================================================================
+
+26/01/2024 v1.3.0
+-------------------------------------------------------------------------------
+
+- Feature: Scripts documentation added (required changes in script names).
+- Enhancement: Display GraXpert Suite version in console.
+- Enhancement: Move change logs in dedicated text file included in package.
+
+26/01/2024 v1.2.1
+-------------------------------------------------------------------------------
+
+- Major: Astrometric solution was not properly restored.
+- Detect crop during UI image import (astrometric solution lost).
+- Detect difference of image width/height in check preferences.
+- Minor change in reset smoothing tooltip.
+- Simplify file structure and update builder.
+
+19/01/2024 v1.2.0
+-------------------------------------------------------------------------------
+
+- Execute global context open dialog box 
+  (can be used to open process icon in dialog box).
+
+04/01/2024 v1.1.0
+-------------------------------------------------------------------------------
+
+- Display GraXpert version after execution.
+- Do not consider missing s3_secrets has real error but as warning 
+  (do not trigger the display of GraXpert logs).
+- Filter Tensor warning messages to avoid trigger of GraXpert logs 
+  in console window.
+- Keep target view file path unchanged when running GraXpert AI.
+- Fix smoothin parameter in case of drag & drop new instance on target view.
+- Add automatic strech.
+- Add GraXpert UI launching, export, import, reprocess and view GraXpert 
+  preferences.
+
+01/01/2024 v1.0.0
+-------------------------------------------------------------------------------
+
+- Rework default parameters.
+- Tested with GraXpert v2.1.1
+- Fix smoothing 0.
+- User can launch UI from script.
+
+21/12/2023 v1.0.0-beta.3
+-------------------------------------------------------------------------------
+
+- Misc changes.
+
+20/12/2023 v1.0.0-beta.2
+-------------------------------------------------------------------------------
+
+- Add automatic version check.
+
+19/12/2023 v1.0.0-beta.1
+-------------------------------------------------------------------------------
+
+- Pre-release Beta 1
+
+18/12/2023 v0.0.8
+-------------------------------------------------------------------------------
+
+- Integration of GraXpert pre-release v2.0.3.
+
+14/22/2023 v0.0.7
+-------------------------------------------------------------------------------
+
+- Display GraXpert errors in console.
+- Avoid save path to temporary file.
+
+12/12/2023 v0.0.6
+-------------------------------------------------------------------------------
+
+- Fix compatibility with MacOS (Thanks to Rob Pfile)
+- Simplify the reset path to GraXpert.
+- Log running time in Pix console.
+- Tooltip improved.
+
+03/12/2023 v0.0.5
+-------------------------------------------------------------------------------
+
+- Compatibility with GraXpert and GradXtractAI.
+- Save preferences.
+
+26/11/2023 v0.0.4
+-------------------------------------------------------------------------------
+
+- Save custom default parameters and reset to Default
+- Automatic configurable path to GraXpert App
+
+23/11/2023 v0.0.3
+-------------------------------------------------------------------------------
+
+- Extract background model by default.
+- Drag & Drop of new instance icon apply process on target image.
+- Fix error undefined ImageMetadata when create new image selected.
+- Fix undeclared variables (engine and ai_model) on first launching.
+
+19/11/2023 v0.0.2
+-------------------------------------------------------------------------------
+
+- Release based on enhanced Command Line Interface of GraXpert version 2.0.2.
+
+12/11/2023 v0.0.1
+-------------------------------------------------------------------------------
+
+- First release based on GraXpert version 2.0.2.
+
+-------------------------------------------------------------------------------

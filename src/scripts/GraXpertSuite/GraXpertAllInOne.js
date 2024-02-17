@@ -43,16 +43,16 @@
 // POSSIBILITY OF SUCH DAMAGE.
 // ----------------------------------------------------------------------------
 
-#feature-id    GraXpertAILauncher : GraXpert Suite > All In One
+#feature-id    GraXpertAllInOne : Utilities > GraXpert-All-In-One
 
 #feature-icon  @script_icons_dir/GraXpert.svg
 
 #feature-info  GraXpert AI image processing.<br/>
 
-#define TITLE "GraXpert (All in One)"
+#define TITLE "GraXpert-All-In-One"
 
-#define __GRAXPERT4PIXINSIGHT_DIALOG__
-#include "GraXpert4PixInsight.js"
+#define __GRAXPERT_ALL_IN_ONE_DIALOG__
+#include "Helper.js"
 
 function main() {
 	Console.hide();

@@ -7,20 +7,25 @@
    <platform os="all" arch="noarch" version="1.8.9-1:1.9.10">
       <package fileName="_ZIP_FILENAME_" sha1="_SHA1_" type="script" releaseDate="_DATE_">
          <title>
-			GraXpert All In One for PixInsight
+			GraXpert All In One
 		</title>
-        <remove>
-			src/scripts/GraXpertSuite/WCSmetadata.jsh,
-			src/scripts/GraXpertSuite/Projections.js,
+         <remove>
+			src/scripts/GraXpertSuite/change-log.txt,
 			src/scripts/GraXpertSuite/GraXpert4PixInsight.js,
 			src/scripts/GraXpertSuite/GraXpertAllInOne.js,
 			src/scripts/GraXpertSuite/GraXpertAllInOne.xsgn,
+			src/scripts/GraXpertSuite/Helper.js,
+			src/scripts/GraXpertSuite/Projections.js,
+			src/scripts/GraXpertSuite/WCSmetadata.jsh,
+			doc/scripts/GraXpert-All-In-One/images/dialogbox.png,
+			doc/scripts/GraXpert-All-In-One/GraXpert-All-In-One.html,
 		</remove>
-        <description>
-			<p>GraXpert All In One, a dedicated PixInsight script for GraXpert users.</p>
-			<p>GraXpert is an astronomical image processing program for extracting and removing gradients from the background of your astrophotos.</p>
-			<p>Copyright (c) 2024 Joel Vallier, All Rights Reserved.</p>
-        </description>
+         <description>
+            <p>GraXpert All In One, a dedicated PixInsight script for GraXpert users.</p>
+            <p>GraXpert is an astronomical image processing program for extracting and removing gradients from the background of your astrophotos.</p>
+            <p>Copyright (c) 2024 Joel Vallier, All Rights Reserved.</p>
+			<p>_CHANGELOG_</p>
+         </description>
       </package>
    </platform>
 </xri>

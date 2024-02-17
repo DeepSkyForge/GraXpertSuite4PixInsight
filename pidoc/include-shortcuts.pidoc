@@ -1,0 +1,12 @@
+!<
+\include include-header.pidoc
+\usage {
+	Select a photo in PixInsight and click on SCRIPT > GraXpert Suite > GXS-UI-Export to open photo in GraXpert user interface.
+	From GraXpert application process photo as usual, save processed photo and background (optional) using default file name.
+	From PixInsight, click on SCRIPT > GraXpert Suite > GXS-UI-Import to import photo in PixInsight.
+	You can reprocess photo by clicking on SCRIPT > GraXpert Suite > GXS-UI-Process.
+	You can use shortcut GraXpert Suite > GXS-UI-Preferences to verify compatibility of GraXpert preferences.
+	Same feature are available in GraXpert-All-In-One or GXS-All-In-One using GraXpert UI buttons.
+}
+
+\include include-footer.pidoc

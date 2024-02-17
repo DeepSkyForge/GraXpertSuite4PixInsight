@@ -2,7 +2,7 @@
 // GraXpert Suite for PixInsight (JavaScript Runtime)
 // ----------------------------------------------------------------------------
 //
-// GraXpertUIImport.js part of GraXpert Suite for PixInsight
+// GXSUIProcess.js part of GraXpert Suite for PixInsight
 // Copyright (c) 2024 Joël Vallier (joel.vallier@gmail.com)
 //
 // Redistribution and use in both source and binary forms, with or without
@@ -43,15 +43,27 @@
 // POSSIBILITY OF SUCH DAMAGE.
 // ----------------------------------------------------------------------------
 
-#feature-id    GraXpertUIImport : GraXpert Suite > UI Import
+#feature-id    GraXpertUIProcess : GraXpert Suite > GXS-UI-Process
 
-#feature-info  GraXpert image import.<br/>
+#feature-info  GraXpert UI process.<br/>
 
-#define TITLE "GraXpert UI Import"
+#define TITLE "GXS-UI-Process"
 
-#include "GraXpert4PixInsight.js"
+#include "Helper.js"
 
 function main() {
+	// script should not run in global mode
+	if (Parameters.isGlobalTarget) {
+		let mb = new MessageBox(
+				"GraXpert can not run in global context.",
+				TITLE,
+				StdIcon_Error,
+				StdButton_Ok
+		);
+		mb.execute()
+		return
+	}
+	
 	// get target view
 	if (Parameters.isViewTarget) {
 		var targetView = Parameters.targetView
@@ -63,13 +75,13 @@ function main() {
 	if ( !targetView || !targetView.id ) {
 		// pop-up alert
 		let mb = new MessageBox(
-				"<p><center>No view selected to restore astronomic data.</center></p>"+
-				"<p><center>Click Ok to continue.</center></p>",
+				"<p><center>No view selected to process GraXpert UI.</center></p>",
 				TITLE,
 				StdIcon_NoIcon,
 				StdButton_Ok
 		);
 		mb.execute()
+		return
 	}
 
 	// initialize parameters
@@ -77,9 +89,27 @@ function main() {
 		return
 	}
 	
-	// perform the script on the target view
+	// create engine
 	let engine = new GraXpert4PixEngine()
-	engine.import(targetView)
+	
+	// display preferences
+	if (engine.preferences(targetView) > 0) {
+		// pop-up alert
+		let mb = new MessageBox(
+			"<p><center>Current UI preferences does not allow image processing.<br>(Check console for details)</center></p>",
+			TITLE,
+			StdIcon_NoIcon,
+			StdButton_Ok
+		);
+		mb.execute();
+		return;
+	};
+	
+	// save preferences
+	GraXpert4PixParams.savePreferences();
+	
+	// reprocess target view
+	engine.execute(targetView, true);
 }
 
 main();

@@ -6,12 +6,11 @@
    </description>
    <platform os="all" arch="noarch" version="1.8.9-1:1.9.10">
       <package fileName="_ZIP_FILENAME_" sha1="_SHA1_" type="script" releaseDate="_DATE_">
-        <title>
-			GraXpert Suite for PixInsight
+         <title>
+			GraXpert Suite
 		</title>
-        <remove>
-			src/scripts/GraXpertSuite/WCSmetadata.jsh,
-			src/scripts/GraXpertSuite/Projections.js,
+         <remove>
+			src/scripts/GraXpertSuite/change-log.txt,
 			src/scripts/GraXpertSuite/GraXpert4PixInsight.js,
 			src/scripts/GraXpertSuite/GraXpertAILauncher.js,
 			src/scripts/GraXpertSuite/GraXpertUIImport.js,
@@ -25,12 +24,35 @@
 			src/scripts/GraXpertSuite/GraXpertUILauncher.xsgn,
 			src/scripts/GraXpertSuite/GraXpertUIPreferences.xsgn,
 			src/scripts/GraXpertSuite/GraXpertUIProcess.xsgn,
+			src/scripts/GraXpertSuite/GXSAllInOne.js,
+			src/scripts/GraXpertSuite/GXSUIImport.js,
+			src/scripts/GraXpertSuite/GXSUIExport.js,
+			src/scripts/GraXpertSuite/GXSUILaunch.js,
+			src/scripts/GraXpertSuite/GXSUIPreferences.js,
+			src/scripts/GraXpertSuite/GXSUIProcess.js,
+			src/scripts/GraXpertSuite/GXSAllInOne.xsgn,
+			src/scripts/GraXpertSuite/GXSUIImport.xsgn,
+			src/scripts/GraXpertSuite/GXSUIExport.xsgn,
+			src/scripts/GraXpertSuite/GXSUILaunch.xsgn,
+			src/scripts/GraXpertSuite/GXSUIPreferences.xsgn,
+			src/scripts/GraXpertSuite/GXSUIProcess.xsgn,
+			src/scripts/GraXpertSuite/Helper.js,
+			src/scripts/GraXpertSuite/Projections.js,
+			src/scripts/GraXpertSuite/WCSmetadata.jsh,
+			doc/scripts/GXS-All-In-One/images/dialogbox.png,
+			doc/scripts/GXS-All-In-One/GXS-All-In-One.html,
+			doc/scripts/GXS-UI-Export/GXS-UI-Export.html,
+			doc/scripts/GXS-UI-Launch/GXS-UI-Launch.html,
+			doc/scripts/GXS-UI-Import/GXS-UI-Import.html,
+			doc/scripts/GXS-UI-Preferences/GXS-UI-Preferences.html,
+			doc/scripts/GXS-UI-Process/GXS-UI-Process.html,
 		</remove>
-        <description>
-			<p>GraXpert Suite, a dedicated set of PixInsight scripts for GraXpert users.</p>
-			<p>GraXpert is an astronomical image processing program for extracting and removing gradients from the background of your astrophotos.</p>
-			<p>Copyright (c) 2024 Joel Vallier, All Rights Reserved.</p>
-        </description>
+         <description>
+            <p>GraXpert Suite, a dedicated set of PixInsight scripts for GraXpert users.</p>
+            <p>GraXpert is an astronomical image processing program for extracting and removing gradients from the background of your astrophotos.</p>
+            <p>Copyright (c) 2024 Joel Vallier, All Rights Reserved.</p>
+			<p>_CHANGELOG_</p>
+         </description>
       </package>
    </platform>
 </xri>

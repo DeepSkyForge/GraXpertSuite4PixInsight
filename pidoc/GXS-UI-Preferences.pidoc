@@ -1,0 +1,9 @@
+\documentclass PIScriptDoc
+
+\script GXS-UI-Preferences
+
+\brief {
+	Simple shortcut to verify GraXpert preferences.
+}
+
+\include include-shortcuts.pidoc

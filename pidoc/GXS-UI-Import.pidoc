@@ -1,0 +1,9 @@
+\documentclass PIScriptDoc
+
+\script GXS-UI-Import
+
+\brief {
+	Simple shortcut to import GraXpert processed photo and background into PixInsight user interface.
+}
+
+\include include-shortcuts.pidoc

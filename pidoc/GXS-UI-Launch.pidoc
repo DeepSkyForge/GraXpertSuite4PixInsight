@@ -1,0 +1,9 @@
+\documentclass PIScriptDoc
+
+\script GXS-UI-Launch
+
+\brief {
+	Simple shortcut to launch GraXpert user interface.
+}
+
+\include include-shortcuts.pidoc

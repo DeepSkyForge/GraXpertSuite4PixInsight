@@ -1,0 +1,13 @@
+!<
+\section References {
+	\definition {
+		{GraXpert} {\xref {https://www.graxpert.com/}{https://www.graxpert.com/}}
+		{GraXpert Suite} {\xref {https://www.deepskyforge.com/}{https://www.deepsckyforge.com/}}
+		{Documentation} {\xref {https://www.deepskyforge.com/documents/GraXpertSuite4PixInsight-EN.pdf}{https://www.deepskyforge.com/documents/GraXpertSuite4PixInsight-EN.pdf}}
+		{Support} {\xref {https://github.com/DeepSkyForge/GraXpertSuite4PixInsight/issues/}{https://github.com/DeepSkyForge/GraXpertSuite4PixInsight/issues/}}
+	}
+}
+
+\copyright {2023-2024 Joël Vallier}
+
+\make

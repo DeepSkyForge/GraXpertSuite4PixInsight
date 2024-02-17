@@ -1,0 +1,114 @@
+!<
+\include include-header.pidoc
+
+\description {
+	GraXpert is an open-source software designed to remove gradients from astrophotos caused by external interferences such as light pollution. 
+	It enhances the aesthetics of deep-sky photos, simplifies post-processing, and enables the removal of color dominances. 
+	It operates independently and exclusively dedicated to this task.
+
+	GraXpert Suite for PixInsignt streamline gradient removal through GraXpert. 
+	You can use AI mode, which is straightforward, or UI mode, which will open your photo in GraXpert UI and import the result back to PixInsight. 
+
+	\center {\figure {\image {images/dialogbox.png}GraXpert All In One dialog box}}
+
+	GraXpert Suite for PixInsight is delevered into 2 packages
+	\definition {
+		  {GraXpert All in One} {
+			 It provides all GraXpert features and so is a good start point. \nf
+			 Script under menu SCRIPT > Utilities.
+		  }
+		  {GraXpert Suite (GXS)} {
+			It provides several shortcuts to GraXpert features including GraXpert All in One. \nf
+			Scripts under dedicated submenu SCRIPT > GraXpert Suite.
+		  }
+	}
+	Both packages can be installed provided that you keep them synchronized in terms of version.
+	This script version requires GraXpert version 2.2.1 or higher and will not work with older versions of GraXpert.
+}
+
+
+\usage {
+	\subsection {Drop down list view} {
+         Select the image to be processed.\nf
+		 You can also use the new instance drap and drop button (triangle on bottom left) to apply process on photo.
+    }
+    \subsection {Correction} {
+         Select \s {Subtraction} for most cases. \nf
+         Only for very strong gradients (i.e. vignetting or things like this) you should select \s {Division} instead.
+    }
+    \subsection {Smoothing} {
+         Under most circumstances the default smoothing factor of 0.0 should be your best choice. \nf
+         The smoothing factor does not influence the result produced by the AI model. The resulting background model can be further smoothed using gaussian blur. Please consider providing your image as training data, if smoothing is required.
+    }
+    \subsection {Create new image} {
+         If checked, a new image will be created. Otherwise, the selected image will be replaced by the processed image. 
+		 If Screen Transfer has been activated on the original photo, it will also be applied to the processed view.
+    }
+    \subsection {Create background model} {
+         If checked, the background model calculated by GraXpert will be shown. 
+		 If Screen Transfer has been activated on the original photo, it will also be applied to the background model.
+    }
+	\subsection {GraXpert UI / Export} {
+         Select a photo en click on GraXpert UI / Export button to automatically open photo in GraXpert graphical interface.
+		 This action is also available from menu SCRIPT > GraXpert Suite > UI Export.
+		 When image is processed, all application parameters are saved for next processing.
+    }
+	\subsection {GraXpert UI / Launch} {
+         Click on GraXpert UI / Launch button to start GraXpert graphical interface.
+		 This action is also available from menu SCRIPT > GraXpert Suite > UI Launcher.
+    }
+	\subsection {GraXpert UI / Import} {
+         After image processed in GraXpert graphical interface and saved with default name, click on GraXpert UI / Import will
+		 automatically import processed image in PixInsight. Same is possible with background model saved with default name.
+    }
+	\subsection {GraXpert UI / Preferences} {
+         Display in PixInsight's console the GraXpert settings and check for an automatic photo reprocessing.
+		 A red exclamation point on the preferences icon will appear if preferences are not compatible with a new automatic processing.
+		 Line in purple indicates that a PixInsight parameters will overwrite current GraXpert settings (basically Correction and Smoothing).
+		 Line in red indicates that parameter is not compatible with an automatic reprocessing (not enough grid point for instance).
+    }
+	\subsection {GraXpert UI / Reprocess} {
+         Click on reprocess to automatically reprocess selected image with current GraXpert preferences and Correction/Smoothing from GraXpert Suite.
+    }
+	\subsection {Debug GraXpert} {
+         If checked, script will display GraXpert logs into PixInsight's console with addition information on execution context. \nf
+		 In case of any issues, all GraXpert logs will be displayed in the console whatever this setting. \nf
+		 Please provide a copy of the console if support is required.
+    }
+    \subsection {Set path} {
+         Set or change the path to the GraXpert application. \nf
+		 A red exclamation point on the icon appears when the path to GraXpert is not filled in or is no longer valid. \nf
+		 The first you will execute GraXpert, script will ask you the path to the application if not yet defined or no longer valid.
+    }
+    \subsection {AI version} {
+         Display AI version that will be used for AI backgroung processing (last AI model will be used by default). \nf
+		 This field won't be displayed if there is no AI model downloaded yet. \nf
+		 The first execution may take some time if you have never loaded the AI model. \nf
+		 You can download several AI versions using GraXpert UI. \nf
+		 You can define which AI model to be used when several versions are available.
+    }
+    \subsection {New instance} {
+		 Dropping the button with blue triangle onto an image will automaticaly launch image processing using AI mode. \nf
+         You can also drop an instance of the script with the current settings to your workspace for later use (process icon). \n
+		 You can edit parameters by double click on process icon but you will need to clear the MD5 checksum field before processing image. 
+		 It is possible to open the GraXpert Suite dialogue box from the process icon by right-clicking and selecting "Execution in the global context“.
+		 In this case, the parameter settings will be saved in the GraXpert Suite preferences, not in the process icon.
+    }
+    \subsection {Execute} {
+         Use the button Execute to process the image using AI mode and current settings. \nf
+		 Your settings are stored and will be restored on the next script run.
+		 Make sure to have an image open else button will be disabled.
+    }
+	\subsection {PixInsight's console Pause/Abort} {
+         You can stop GraXpert execution at any time by clicking on PixInsight's console Pause/Abort and confirm Abort action.
+		 GraXpert UI Export and Launcher run GraXpert graphical interface in detached mode. You can close the application itself.
+    }
+    \subsection {Cancel} {
+         Closes the script.
+    }
+    \subsection {Reset} {
+         Resets all your settings to their default values.
+    }
+}
+
+\include include-footer.pidoc

@@ -1,0 +1,9 @@
+\documentclass PIScriptDoc
+
+\script GraXpert-All-In-One
+
+\brief {
+	Use GraXpert All In One script to remove gradients from astrophotos.
+}
+
+\include include-all-in-one.pidoc
