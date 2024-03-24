@@ -459,10 +459,10 @@ function GraXpert4PixEngine() {
 		};
 		if ( status === undefined ) {
 			Console.write( "<end>\b" + "-\\|/".charAt( this.progress.counter%4 ) );
-			this.progress.counter++
+			this.progress.counter++;
 		} else if ( status == "Completed" || status == "Started" ) {
 			Console.writeln( "<end>\b \b" + status );
-			this.progress.counter = 0
+			this.progress.counter = 0;
 		} else {
 			Console.write( "<end>\b \b" );
 			Console.criticalln( status );
@@ -1561,8 +1561,8 @@ function GraXpert4PixDialog(targetView, engine) {
 	this.execButtonSizer.add( this.saveButton );
 	this.execButtonSizer.add( this.execButton );
 	this.execButtonSizer.add( this.cancelButton );
-	this.execButtonSizer.add( this.resetButton );
 	this.execButtonSizer.add( this.helpButton );
+	this.execButtonSizer.add( this.resetButton );
 	
 	// layout the dialog
 	this.sizer = new VerticalSizer;
